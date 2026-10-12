@@ -27,11 +27,11 @@ Comes with .jsons setup in the "SlotsToAdd" to add all of the NPC enemies. If yo
   - Rename the "BP_Menu_Outfits" to whatever
   - Rename the "BP_Menu_Outfits-UnlockAll" to "BP_Menu_Outfits"
 
-### Using the SifuWardRobeManager to Expand the Wardrobe
+### Using the SifuWardrobeManager to Expand the Wardrobe
 
 - Duplicate a .json in the "SlotsToAdd" folder (or use the Template.json)
 - Rename it, they get added alphabetically (hence why the NPCs use numbers at the start)
-- Open your new .json, set a new Name, Description, and Paths
+- Open your new .json, set a new Name, Description, and Paths to match the new model
 - Open the SifuWardrobeManager.exe
     - The modified assets will be saved into a new folder named "SifuWardrobeManager"
     - A Pak will automatically be created using the "SifuWardrobeManager" folder, along with copying a .sig in the "ORIGINALASSETS" folder.
