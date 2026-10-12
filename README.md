@@ -49,6 +49,6 @@ I got Sifu from Nexus' Donation Points system recently and enjoyed it immensely.
 I decided to learn how they created the mod (adding button slots and setting the NPC models to the slot index).
 
 After figuring it all out, I manually expanded it a few times with [UAssetGUI](https://github.com/atenfyr/UAssetGUI)
-but it was too tedious to add multiple at once, so I made this tool to add multiple at once for me.
+but it was too tedious to add multiple slots, so I made this tool to simplify the process and save myself a ton of time since I wanted to add over 200 entries for all the NPCs.
 
 As an added benefit of being done automatically through .jsons, we can now additionally add/remove any slots we want without any effort and should be good in future updates - just having to update the "ORIGINALASSETS" folder.
