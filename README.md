@@ -14,7 +14,11 @@ Additionally comes with a "BP_Menu_Outfits-UnlockAll" asset in the "ORIGINALASSE
 - Open the "SlotsToAdd" folder
 - Duplicate any .json
 - Rename it, they get added alphabetically, hence why the NPCs use numbers at the start
-- Open your new .json, set a new Name, Description, and Paths.
+- Open your new .json, set a new Name, Description, and Paths
+- OPTIONAL: If you want to have the original outfits unlocked by default:
+  - Open the "ORIGINALASSETS" folder
+  - Rename the "BP_Menu_Outfits" to whatever
+  - Rename the "BP_Menu_Outfits-UnlockAll" to "BP_Menu_Outfits"
 - Open the SifuWardrobeManager.exe
     - The modified assets will be saved into a new folder named "SifuWardrobeManager"
     - A Pak will automatically be created using the "SifuWardrobeManager" folder, along with copying a .sig in the "ORIGINALASSETS" folder.
@@ -31,7 +35,11 @@ Additionally comes with a "BP_Menu_Outfits-UnlockAll" asset in the "ORIGINALASSE
 - Ensure your Mod folder is accurate to your updated path
     - If using the previous Example: The path would be "Sifu/Content/Zair_2B/W/", followed by the Materials/Meshes/Textures folders.
 - Create a new .json in the "SlotsToAdd"
-- Open your new .json, set a new Name, Description, and Paths.
+- Open your new .json, set a new Name, Description, and Paths
+- OPTIONAL: If you want to have the original outfits unlocked by default:
+  - Open the "ORIGINALASSETS" folder
+  - Rename the "BP_Menu_Outfits" to whatever
+  - Rename the "BP_Menu_Outfits-UnlockAll" to "BP_Menu_Outfits"
 - Open the SifuWardrobeManager.exe
     - The modified assets will be saved into a new folder named "SifuWardrobeManager"
     - A Pak will automatically be created using the "SifuWardrobeManager" folder, along with copying a .sig in the "ORIGINALASSETS" folder.
