@@ -8,6 +8,7 @@ Uses [UAssetAPI](https://github.com/atenfyr/UAssetAPI) to open the assets in "OR
 [Newtonsoft.Json](https://www.nuget.org/packages/newtonsoft.json/) is used to read the .jsons that this tool loads to add new wardrobe slots.
 
 Comes with .jsons setup in the "SlotsToAdd" to add all of the NPC enemies. If you want to add a modded character, the mod developer must use a unique path + upload a .json along with it to be used with this tool.
+Alternatively the end user can alter the pathways of the existing mod to not replace the original mesh.
 
 ## USAGE  (SETTING EXISTING MODS ON NEW SLOTS)
 
