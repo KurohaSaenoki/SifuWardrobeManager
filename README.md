@@ -18,21 +18,24 @@ Additionally comes with a "BP_Menu_Outfits-UnlockAll" asset in the "ORIGINALASSE
 - Open the SifuWardrobeManager.exe
     - The modified assets will be saved into a new folder named "SifuWardrobeManager"
     - A Pak will automatically be created using the "SifuWardrobeManager" folder, along with copying a .sig in the "ORIGINALASSETS" folder.
-- Place the .pak and .sig into your Sifu/Sifu/Content/Paks/~mods folder
+- Place the SifuWardrobeManager_9_P .pak and .sig into your Sifu/Sifu/Content/Paks/~mods folder
 
 ## EXISTING MODS ON NEW SLOTS
 
 - Using [UnrealPak](https://unrealpak.com/), Unpak the existing mod .pak folder
+- Create any missing folders since if there was nothing in those folders, UnrealPak gets rid of them...
+    - If the current path is: "{Mod-Name}/Materials/Meshes/Textures", update it to: "{ModFolder}/Sifu/Content/Characters/MainChar/M (or W)/"
 - Using my [UE-Path-Updater](https://github.com/KurohaSaenoki/UE-Path-Updater), update the mods assets so the pathing is no longer:
     - /Game/Characters/MainChar/
-      - Example: /Game/Characters/MainChar/ -> /Game/Zair_2B/ (resulting in {Mod-Name}/Sifu/Content/Zair_2B/W/Meshes/SK_W_MainChar_01)
+    - Example: /Game/Characters/MainChar/ -> /Game/Zair_2B/ (resulting in {Mod-Name}/Sifu/Content/Zair_2B/W/Meshes/SK_W_MainChar_01)
+- Ensure your Mod folder is accurate to your updated path
+    - If using the previous Example: The path would be "Sifu/Content/Zair_2B/W/", followed by the Materials/Meshes/Textures folders.
 - Create a new .json in the "SlotsToAdd"
 - Open your new .json, set a new Name, Description, and Paths.
-    - If using the previous Example, the path would be "Sifu/Content/Zair_2B/W/Meshes/SK_W_MainChar_01"
 - Open the SifuWardrobeManager.exe
     - The modified assets will be saved into a new folder named "SifuWardrobeManager"
     - A Pak will automatically be created using the "SifuWardrobeManager" folder, along with copying a .sig in the "ORIGINALASSETS" folder.
-- Place the .pak and .sig into your Sifu/Sifu/Content/Paks/~mods folder
+- Place the SifuWardrobeManager_9_P .pak and .sig into your Sifu/Sifu/Content/Paks/~mods folder
 
 
 ## Why did I make this?
