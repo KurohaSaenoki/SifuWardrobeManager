@@ -10,9 +10,9 @@ Uses [UAssetAPI](https://github.com/atenfyr/UAssetAPI) to open the assets in "OR
 Comes with .jsons setup in the "SlotsToAdd" to add all of the NPC enemies. If you want to add a modded character, the mod developer must use a unique path + upload a .json along with it to be used with this tool.
 Alternatively the end user can alter the pathways of the existing mod to not replace the original mesh.
 
-## USAGE  (SETTING EXISTING MODS ON NEW SLOTS)
+## USAGE  (EXISTING MODS TO NEW SLOTS)
 
-### Updating File Paths from the existing mod to no longer replace the original model
+### Updating File Paths from Existing Mods
 - Using [UnrealPak](https://unrealpak.com/), Unpak the existing mod .pak folder
 - Using my [UE-Path-Updater](https://github.com/KurohaSaenoki/UE-Path-Updater), update the mods assets so the pathing is no longer: /Game/Characters/MainChar/
     - Example: /Game/Characters/MainChar/ -> /Game/Zair_2B/
