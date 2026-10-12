@@ -1,0 +1,9 @@
+{
+	"Name": "Juggernaut (Club)",
+	"Description": "Doorman 1",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/BigGuy/Meshes/Hideout02/SK_BigGuy_Hideout_02_DoorMan_03",
+		"Female": "Sifu/Content/Characters/PNJ/BigGuy/Meshes/Hideout02/SK_BigGuy_Hideout_02_DoorMan_03"
+	}
+}
+

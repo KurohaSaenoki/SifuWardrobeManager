@@ -1,0 +1,9 @@
+{
+	"Name": "Disciple (Club)",
+	"Description": "Burned",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/Disicple/M/Meshes/Hideout02/SK_Disciple_M_Hideout02_CINE_BodyBurned",
+		"Female": "Sifu/Content/Characters/PNJ/Disicple/M/Meshes/Hideout02/SK_Disciple_M_Hideout02_CINE_BodyBurned"
+	}
+}
+

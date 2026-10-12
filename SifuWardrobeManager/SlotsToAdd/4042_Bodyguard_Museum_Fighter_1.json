@@ -1,0 +1,9 @@
+{
+	"Name": "Bodyguard (Museum)",
+	"Description": "Fighter 1",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/BodyGuards/M/Meshes/Hideout03/SK_BodyGuard_M_Hideout03_Fighter_01",
+		"Female": "Sifu/Content/Characters/PNJ/BodyGuards/M/Meshes/Hideout03/SK_BodyGuard_M_Hideout03_Fighter_01"
+	}
+}
+

@@ -1,0 +1,8 @@
+{
+	"Name": "Juggernaut (Club)",
+	"Description": "Fighter",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/BigGuy/Meshes/Hideout02/SK_BigGuy_Hideout02_Fighter_01",
+		"Female": "Sifu/Content/Characters/PNJ/BigGuy/Meshes/Hideout02/SK_BigGuy_Hideout02_Fighter_01"
+	}
+}

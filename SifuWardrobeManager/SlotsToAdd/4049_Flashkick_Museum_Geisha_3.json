@@ -1,0 +1,9 @@
+{
+	"Name": "Flashkick (Museum)",
+	"Description": "Geisha 3",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/FlashKick/Meshes/Hideout03/SK_FlashKick_Hideout_03_Geisha_03",
+		"Female": "Sifu/Content/Characters/PNJ/FlashKick/Meshes/Hideout03/SK_FlashKick_Hideout_03_Geisha_03"
+	}
+}
+

@@ -1,0 +1,8 @@
+{
+	"Name": "Flashkick (Club)",
+	"Description": "Barmaid 1",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/FlashKick/Meshes/Hideout02/SK_FlashKick_Hideout_02_Barmaid_01",
+		"Female": "Sifu/Content/Characters/PNJ/FlashKick/Meshes/Hideout02/SK_FlashKick_Hideout_02_Barmaid_01"
+	}
+}

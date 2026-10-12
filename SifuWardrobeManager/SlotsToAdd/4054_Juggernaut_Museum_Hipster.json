@@ -1,0 +1,9 @@
+{
+	"Name": "Juggernaut (Museum)",
+	"Description": "Hipster",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/BigGuy/Meshes/Hideout03/SK_BigGuy_Hideout03_Hipster_01",
+		"Female": "Sifu/Content/Characters/PNJ/BigGuy/Meshes/Hideout03/SK_BigGuy_Hideout03_Hipster_01"
+	}
+}
+
