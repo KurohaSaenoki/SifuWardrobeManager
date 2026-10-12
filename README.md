@@ -24,8 +24,6 @@ Additionally comes with a "BP_Menu_Outfits-UnlockAll" asset in the "ORIGINALASSE
 - Ensure it has a .sig by copying any other sig and renaming it to match the pak name
 
 ### Optional Step to Unlock all Vanilla Outfits
-
-- OPTIONAL: If you want to have the original outfits unlocked by default:
   - Open the "ORIGINALASSETS" folder
   - Rename the "BP_Menu_Outfits" to whatever
   - Rename the "BP_Menu_Outfits-UnlockAll" to "BP_Menu_Outfits"
