@@ -1,0 +1,9 @@
+{
+	"Name": "Sean (Phase 1)",
+	"Description": "The Fighter",
+	"Model": {
+		"Male": "Sifu/Content/Characters/Boss/Sean/Meshes/SK_Sean_Phase01",
+		"Female": "Sifu/Content/Characters/Boss/Sean/Meshes/SK_Sean_Phase01"
+	}
+}
+

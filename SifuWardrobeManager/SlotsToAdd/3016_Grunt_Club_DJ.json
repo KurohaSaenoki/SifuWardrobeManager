@@ -1,0 +1,9 @@
+{
+	"Name": "Grunt (Club)",
+	"Description": "DJ",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/Grunt/M/Meshes/Hideout2/SK_Grunt_M_Hideout_02_DJ_01",
+		"Female": "Sifu/Content/Characters/PNJ/Grunt/M/Meshes/Hideout2/SK_Grunt_M_Hideout_02_DJ_01"
+	}
+}
+

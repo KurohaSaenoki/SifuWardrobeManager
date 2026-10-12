@@ -1,0 +1,9 @@
+{
+	"Name": "Fajar (Prologue)",
+	"Description": "The Botanist",
+	"Model": {
+		"Male": "Sifu/Content/Characters/Boss/Fajar/Meshes/SK_Fajar_HD0",
+		"Female": "Sifu/Content/Characters/Boss/Fajar/Meshes/SK_Fajar_HD0"
+	}
+}
+

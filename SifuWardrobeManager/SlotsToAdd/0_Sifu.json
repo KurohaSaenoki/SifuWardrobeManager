@@ -1,0 +1,8 @@
+{
+	"Name": "Sifu",
+	"Description": "My Father",
+	"Model": {
+		"Male": "Sifu/Content/Characters/Boss/Sifu/Meshes/SK_Sifu_01",
+		"Female": "Sifu/Content/Characters/Boss/Sifu/Meshes/SK_Sifu_01"
+	}
+}

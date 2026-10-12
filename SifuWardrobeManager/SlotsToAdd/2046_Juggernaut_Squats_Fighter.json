@@ -1,0 +1,9 @@
+{
+	"Name": "Juggernaut (Squats)",
+	"Description": "Fighter",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/BigGuy/Meshes/Hideout01/SK_BigGuy_Hideout01_Fighter_01",
+		"Female": "Sifu/Content/Characters/PNJ/BigGuy/Meshes/Hideout01/SK_BigGuy_Hideout01_Fighter_01"
+	}
+}
+

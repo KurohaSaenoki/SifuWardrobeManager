@@ -1,0 +1,9 @@
+{
+	"Name": "Kuroki (Prologue)",
+	"Description": "The Artist",
+	"Model": {
+		"Male": "Sifu/Content/Characters/Boss/Kuroki/Meshes/SK_Kuroki_Phase01",
+		"Female": "Sifu/Content/Characters/Boss/Kuroki/Meshes/SK_Kuroki_Phase01"
+	}
+}
+
