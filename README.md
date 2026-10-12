@@ -1,3 +1,4 @@
+
 # SifuWardrobeManager
 
 Built in C# with Visual Studio, Requires [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
@@ -39,6 +40,7 @@ Additionally comes with a "BP_Menu_Outfits-UnlockAll" asset in the "ORIGINALASSE
     - A Pak will automatically be created using the "SifuWardrobeManager" folder, along with copying a .sig in the "ORIGINALASSETS" folder.
 - Place the SifuWardrobeManager_9_P .pak and .sig into your Sifu/Sifu/Content/Paks/~mods folder
 
+<img width="2558" height="1439" src="https://github.com/user-attachments/assets/3f60d073-6d93-4e58-856b-cbfb5f73fb2a" />
 
 ## Why did I make this?
 
