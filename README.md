@@ -9,37 +9,23 @@ Comes with .jsons setup in the "SlotsToAdd" to add all of the NPC enemies. If yo
 
 Additionally comes with a "BP_Menu_Outfits-UnlockAll" asset in the "ORIGINALASSETS" folder, simply rename the original "BP_Menu_Outfits" assets to use this one instead which has the vanilla outfits all unlocked.
 
-## USAGE
-
-- Open the "SlotsToAdd" folder
-- Duplicate any .json
-- Rename it, they get added alphabetically, hence why the NPCs use numbers at the start
-- Open your new .json, set a new Name, Description, and Paths
-- OPTIONAL: If you want to have the original outfits unlocked by default:
-  - Open the "ORIGINALASSETS" folder
-  - Rename the "BP_Menu_Outfits" to whatever
-  - Rename the "BP_Menu_Outfits-UnlockAll" to "BP_Menu_Outfits"
-- Open the SifuWardrobeManager.exe
-    - The modified assets will be saved into a new folder named "SifuWardrobeManager"
-    - A Pak will automatically be created using the "SifuWardrobeManager" folder, along with copying a .sig in the "ORIGINALASSETS" folder.
-- Place the SifuWardrobeManager_9_P .pak and .sig into your Sifu/Sifu/Content/Paks/~mods folder
-
-## EXISTING MODS ON NEW SLOTS
+## USAGE  (SETTING EXISTING MODS ON NEW SLOTS)
 
 - Using [UnrealPak](https://unrealpak.com/), Unpak the existing mod .pak folder
-- Create any missing folders since if there was nothing in those folders, UnrealPak gets rid of them...
-    - If the current path is: "{Mod-Name}/Materials/Meshes/Textures", update it to: "{ModFolder}/Sifu/Content/Characters/MainChar/M (or W)/"
-- Using my [UE-Path-Updater](https://github.com/KurohaSaenoki/UE-Path-Updater), update the mods assets so the pathing is no longer:
-    - /Game/Characters/MainChar/
+- Using my [UE-Path-Updater](https://github.com/KurohaSaenoki/UE-Path-Updater), update the mods assets so the pathing is no longer: /Game/Characters/MainChar/
     - Example: /Game/Characters/MainChar/ -> /Game/Zair_2B/ (resulting in {Mod-Name}/Sifu/Content/Zair_2B/W/Meshes/SK_W_MainChar_01)
-- Ensure your Mod folder is accurate to your updated path
+- Ensure your Unpaked Mod folder is accurate to your updated path
     - If using the previous Example: The path would be "Sifu/Content/Zair_2B/W/", followed by the Materials/Meshes/Textures folders.
-- Create a new .json in the "SlotsToAdd"
+
+- Duplicate a .json in the "SlotsToAdd" folder (or use the Template.json)
+- Rename it, they get added alphabetically (hence why the NPCs use numbers at the start)
 - Open your new .json, set a new Name, Description, and Paths
+
 - OPTIONAL: If you want to have the original outfits unlocked by default:
   - Open the "ORIGINALASSETS" folder
   - Rename the "BP_Menu_Outfits" to whatever
   - Rename the "BP_Menu_Outfits-UnlockAll" to "BP_Menu_Outfits"
+
 - Open the SifuWardrobeManager.exe
     - The modified assets will be saved into a new folder named "SifuWardrobeManager"
     - A Pak will automatically be created using the "SifuWardrobeManager" folder, along with copying a .sig in the "ORIGINALASSETS" folder.
