@@ -43,6 +43,7 @@ Comes with .jsons setup in the "SlotsToAdd" to add all of the NPC enemies. If yo
 
 I got Sifu from Nexus' Donation Points system recently and enjoyed it immensely. I used a mod called "[Sifu Character Selector](https://www.nexusmods.com/sifu/mods/871)", which added the NPCs as costumes shortly after beating the game for the first time, but it's outdated without the new outfits.
 
+
 I decided to learn how they created the mod (adding button slots and setting the NPC models to the slot index).
 
 After figuring it all out, I manually expanded it a few times with [UAssetGUI](https://github.com/atenfyr/UAssetGUI)
