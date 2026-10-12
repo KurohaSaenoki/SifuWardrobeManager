@@ -37,8 +37,8 @@ Comes with .jsons setup in the "SlotsToAdd" to add all of the NPC enemies. If yo
     - A Pak will automatically be created using the "SifuWardrobeManager" folder, along with copying a .sig in the "ORIGINALASSETS" folder.
 - Place the SifuWardrobeManager_9_P .pak and .sig into your Sifu/Sifu/Content/Paks/~mods folder
 
-<a href="www.nexusmods.com/sifu/mods/118">
-  <img width="2558" height="1439" src="https://github.com/user-attachments/assets/3f60d073-6d93-4e58-856b-cbfb5f73fb2a" />
+<a href="https://www.nexusmods.com/sifu/mods/118">
+<img width="2558" height="1439" src="https://github.com/user-attachments/assets/3f60d073-6d93-4e58-856b-cbfb5f73fb2a" alt="2B Mod by Zair"/>
 </a>
 
 ## Why did I make this?
