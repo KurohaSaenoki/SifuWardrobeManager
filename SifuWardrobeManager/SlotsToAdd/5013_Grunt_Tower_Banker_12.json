@@ -1,0 +1,9 @@
+{
+	"Name": "Grunt (Tower)",
+	"Description": "Banker 12",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/Grunt/M/Meshes/Hideout4/SK_Grunt_M_Hideout4_Banker_12",
+		"Female": "Sifu/Content/Characters/PNJ/Grunt/M/Meshes/Hideout4/SK_Grunt_M_Hideout4_Banker_12"
+	}
+}
+

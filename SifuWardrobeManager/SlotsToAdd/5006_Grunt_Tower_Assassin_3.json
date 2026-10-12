@@ -1,0 +1,9 @@
+{
+	"Name": "Grunt (Tower)",
+	"Description": "Assassin 3",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/Grunt/M/Meshes/Hideout4/SK_Grunt_M_Hideout4_Assassin_03",
+		"Female": "Sifu/Content/Characters/PNJ/Grunt/W/Meshes/Hideout4/SK_Grunt_W_Hideout4_Assassin_03"
+	}
+}
+
