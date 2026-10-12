@@ -8,8 +8,6 @@ Uses [UAssetAPI](https://github.com/atenfyr/UAssetAPI) to open the assets in "OR
 
 Comes with .jsons setup in the "SlotsToAdd" to add all of the NPC enemies. If you want to add a modded character, the mod developer must use a unique path + upload a .json along with it to be used with this tool.
 
-Additionally comes with a "BP_Menu_Outfits-UnlockAll" asset in the "ORIGINALASSETS" folder, simply rename the original "BP_Menu_Outfits" assets to use this one instead which has the vanilla outfits all unlocked.
-
 ## USAGE  (SETTING EXISTING MODS ON NEW SLOTS)
 
 ### Updating File Paths from the existing mod to no longer replace the original model
