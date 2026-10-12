@@ -40,7 +40,7 @@ Additionally comes with a "BP_Menu_Outfits-UnlockAll" asset in the "ORIGINALASSE
 
 ## Why did I make this?
 
-I got Sifu from Nexus' Donation Points system and enjoyed it immensely. I then used a mod called "[Sifu Character Selector](https://www.nexusmods.com/sifu/mods/871)", which added the NPCs as costumes, but it's outdated without the new outfits.
-I decided to learn how they added the button slots, manually expanding it a few times with UAssetGUI, but it was too tedious to add multiple at once, so I made this tool to add multiple at once for me.
+I got Sifu from Nexus' Donation Points system recently and enjoyed it immensely. I then used a mod called "[Sifu Character Selector](https://www.nexusmods.com/sifu/mods/871)", which added the NPCs as costumes, but it's outdated without the new outfits.
+I decided to learn how they added the button slots, manually expanding it a few times with [UAssetGUI](https://github.com/atenfyr/UAssetGUI), but it was too tedious to add multiple at once, so I made this tool to add multiple at once for me.
 
 As an added benefit of being done automatically through .jsons, we can now additionally add/remove any slots we want without any effort and should be good in future updates - just having to update the "ORIGINALASSETS" folder.
