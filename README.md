@@ -4,6 +4,7 @@
 Built in C# with Visual Studio, Requires [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
 
 Uses [UAssetAPI](https://github.com/atenfyr/UAssetAPI) to open the assets in "ORIGINALASSETS" and then expand both of them, saves them as new assets, then uses [UnrealPak](https://unrealpak.com/) to compile the mod for you.
+
 [Newtonsoft.Json](https://www.nuget.org/packages/newtonsoft.json/) is used to read the .jsons that contains the slots: Name, Description, and Mesh Paths.
 
 Comes with .jsons setup in the "SlotsToAdd" to add all of the NPC enemies. If you want to add a modded character, the mod developer must use a unique path + upload a .json along with it to be used with this tool.
@@ -41,6 +42,10 @@ Comes with .jsons setup in the "SlotsToAdd" to add all of the NPC enemies. If yo
 ## Why did I make this?
 
 I got Sifu from Nexus' Donation Points system recently and enjoyed it immensely. I used a mod called "[Sifu Character Selector](https://www.nexusmods.com/sifu/mods/871)", which added the NPCs as costumes shortly after beating the game for the first time, but it's outdated without the new outfits.
-I decided to learn how they added the button slots, manually expanding it a few times with [UAssetGUI](https://github.com/atenfyr/UAssetGUI), but it was too tedious to add multiple at once, so I made this tool to add multiple at once for me.
+
+I decided to learn how they created the mod (adding button slots and setting the NPC models to the slot index).
+
+After figuring it all out, I manually expanded it a few times with [UAssetGUI](https://github.com/atenfyr/UAssetGUI)
+but it was too tedious to add multiple at once, so I made this tool to add multiple at once for me.
 
 As an added benefit of being done automatically through .jsons, we can now additionally add/remove any slots we want without any effort and should be good in future updates - just having to update the "ORIGINALASSETS" folder.
