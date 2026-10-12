@@ -1,18 +1,17 @@
 
 # SifuWardrobeManager
 
-Built in C# with Visual Studio, Requires [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
+Built in C# with Visual Studio 2022, Requires [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
 
 Uses [UAssetAPI](https://github.com/atenfyr/UAssetAPI) to open the assets in "ORIGINALASSETS" and then expand both of them, saves them as new assets, then uses [UnrealPak](https://unrealpak.com/) to compile the mod for you.
 
-[Newtonsoft.Json](https://www.nuget.org/packages/newtonsoft.json/) is used to read the .jsons that contains the slots: Name, Description, and Mesh Paths.
+[Newtonsoft.Json](https://www.nuget.org/packages/newtonsoft.json/) is used to read the .jsons that this tool loads to add new wardrobe slots.
 
 Comes with .jsons setup in the "SlotsToAdd" to add all of the NPC enemies. If you want to add a modded character, the mod developer must use a unique path + upload a .json along with it to be used with this tool.
 
 ## USAGE  (SETTING EXISTING MODS ON NEW SLOTS)
 
 ### Updating File Paths from the existing mod to no longer replace the original model
-
 - Using [UnrealPak](https://unrealpak.com/), Unpak the existing mod .pak folder
 - Using my [UE-Path-Updater](https://github.com/KurohaSaenoki/UE-Path-Updater), update the mods assets so the pathing is no longer: /Game/Characters/MainChar/
     - Example: /Game/Characters/MainChar/ -> /Game/Zair_2B/
@@ -28,7 +27,6 @@ Comes with .jsons setup in the "SlotsToAdd" to add all of the NPC enemies. If yo
   - Rename the "BP_Menu_Outfits-UnlockAll" to "BP_Menu_Outfits"
 
 ### Using the SifuWardrobeManager to Expand the Wardrobe
-
 - Duplicate a .json in the "SlotsToAdd" folder (or use the Template.json)
 - Rename it, they get added alphabetically (hence why the NPCs use numbers at the start)
 - Open your new .json, set a new Name, Description, and Paths to match the new model
@@ -42,9 +40,7 @@ Comes with .jsons setup in the "SlotsToAdd" to add all of the NPC enemies. If yo
 </a>
 
 ## Why did I make this?
-
 I got Sifu from Nexus' Donation Points system recently and enjoyed it immensely. I used a mod called "[Sifu Character Selector](https://www.nexusmods.com/sifu/mods/871)", which added the NPCs as costumes shortly after beating the game for the first time, but it's outdated without the new outfits.
-
 
 I decided to learn how they created the mod (adding button slots and setting the NPC models to the slot index).
 
