@@ -13,18 +13,22 @@ Additionally comes with a "BP_Menu_Outfits-UnlockAll" asset in the "ORIGINALASSE
 
 - Using [UnrealPak](https://unrealpak.com/), Unpak the existing mod .pak folder
 - Using my [UE-Path-Updater](https://github.com/KurohaSaenoki/UE-Path-Updater), update the mods assets so the pathing is no longer: /Game/Characters/MainChar/
-    - Example: /Game/Characters/MainChar/ -> /Game/Zair_2B/ (resulting in {Mod-Name}/Sifu/Content/Zair_2B/W/Meshes/SK_W_MainChar_01)
+    - Example: /Game/Characters/MainChar/ -> /Game/Zair_2B/
+    - Resulting in the path being: {Mod-Name}/Sifu/Content/Zair_2B/
 - Ensure your Unpaked Mod folder is accurate to your updated path
-    - If using the previous Example: The path would be "Sifu/Content/Zair_2B/W/", followed by the Materials/Meshes/Textures folders.
+- Use UnrealPak to RePak the mod folder using these new pathways
+
 
 - Duplicate a .json in the "SlotsToAdd" folder (or use the Template.json)
 - Rename it, they get added alphabetically (hence why the NPCs use numbers at the start)
 - Open your new .json, set a new Name, Description, and Paths
 
+
 - OPTIONAL: If you want to have the original outfits unlocked by default:
   - Open the "ORIGINALASSETS" folder
   - Rename the "BP_Menu_Outfits" to whatever
   - Rename the "BP_Menu_Outfits-UnlockAll" to "BP_Menu_Outfits"
+
 
 - Open the SifuWardrobeManager.exe
     - The modified assets will be saved into a new folder named "SifuWardrobeManager"
