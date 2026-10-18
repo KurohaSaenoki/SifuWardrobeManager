@@ -1,7 +1,7 @@
 
 # SifuWardrobeManager
 
-Built in C# with Visual Studio 2022, Requires [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
+Built in C# with Visual Studio 2026, Requires [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
 
 Uses [UAssetAPI](https://github.com/atenfyr/UAssetAPI) to open the assets in "ORIGINALASSETS" and then expand both of them, saves them as new assets, then uses [UnrealPak](https://unrealpak.com/) to compile the mod for you.
 
@@ -22,18 +22,14 @@ Alternatively the end user can alter the pathways of the existing mod to not rep
 - Place the new mod .pak into your Sifu/Sifu/Content/Paks/~mods folder
 - Ensure it has a .sig by copying any other sig and renaming it to match the pak name
 
-### Optional Step to Unlock all Vanilla Outfits
-  - Open the "ORIGINALASSETS" folder
-  - Rename the "BP_Menu_Outfits" to whatever
-  - Rename the "BP_Menu_Outfits-UnlockAll" to "BP_Menu_Outfits"
-
 ### Using the SifuWardrobeManager to Expand the Wardrobe
 - Duplicate a .json in the "SlotsToAdd" folder (or use the Template.json)
 - Rename it, they get added alphabetically (hence why the NPCs use numbers at the start)
 - Open your new .json, set a new Name, Description, and Paths to match the new model
 - Open the SifuWardrobeManager.exe
+    - It should ask if you want to Unlock every vanilla outfit, Y/y to do so, otherwise just press Enter to continue
     - The modified assets will be saved into a new folder named "SifuWardrobeManager"
-    - A Pak will automatically be created using the "SifuWardrobeManager" folder, along with copying a .sig in the "ORIGINALASSETS" folder.
+    - A Pak will automatically be created using the "SifuWardrobeManager" folder, along with copying a .sig in the "ORIGINALASSETS" folder
 - Place the SifuWardrobeManager_9_P .pak and .sig into your Sifu/Sifu/Content/Paks/~mods folder
 
 <a href="https://www.nexusmods.com/sifu/mods/118">
