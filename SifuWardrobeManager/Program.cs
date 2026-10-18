@@ -1,20 +1,21 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using UAssetAPI;
 using UAssetAPI.ExportTypes;
 using UAssetAPI.FieldTypes;
 using UAssetAPI.PropertyTypes.Objects;
 using UAssetAPI.PropertyTypes.Structs;
 using UAssetAPI.UnrealTypes;
-using System.Runtime.InteropServices;
 
 namespace SifuWardrobeManager
 {
@@ -24,9 +25,9 @@ namespace SifuWardrobeManager
         public static string? desc;
         public static string? male;
         public static string? female;
-
         public static int bloodSlotIndex = 0;
         public static int slotCount = 0;
+        public static bool ModifiedAssets = false;
 
         static void Main(string[] args)
         {
@@ -43,21 +44,98 @@ namespace SifuWardrobeManager
                 UAsset MenuOutfitAsset = new UAsset(NecessaryFiles[0], EngineVersion.VER_UE4_26);
                 UAsset PlayerAsset = new UAsset(NecessaryFiles[2], EngineVersion.VER_UE4_26);
 
+                string SlotsToAddPath = Path.Combine(Directory.GetCurrentDirectory(), "SlotsToAdd");
+                if (!Directory.Exists(SlotsToAddPath))
+                {
+                    Directory.CreateDirectory(SlotsToAddPath);
+                }
+
                 string[] JSONFileArray = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "SlotsToAdd"));
 
+                //Do this early so we can modify existing Exports before adding
+                NormalExport OutfitsScrollExport = (NormalExport)MenuOutfitAsset["OutfitsScroll"];
+                if (OutfitsScrollExport == null)
+                {
+                    Console.WriteLine("Missing the OutfitsScroll Export. Please ensure the asset is correct.");
+                    Proceed();
+                    return;
+                }
+
+                //Modify Current Slots to make them unlocked by default
+                Console.WriteLine("Unlock All Vanilla Costumes? [Y/N] (Default Value: N)");
+                string? UnlockOutfitsStr = Console.ReadLine();
+                Console.WriteLine();
+                if (UnlockOutfitsStr == "Y" || UnlockOutfitsStr == "y")
+                {
+                    if (OutfitsScrollExport["Slots"] is ArrayPropertyData arrProp)
+                    {
+                        foreach (ObjectPropertyData prop in arrProp.Value)
+                        {
+                            NormalExport CurrentObjExport = (NormalExport)MenuOutfitAsset.Exports[prop.Value.Index - 1];
+
+                            if (CurrentObjExport?.Data.FirstOrDefault(x => x.Name.ToString() == "Content") is ObjectPropertyData ContentObjProp)
+                            {
+                                CurrentObjExport = (NormalExport)MenuOutfitAsset.Exports[ContentObjProp.Value.Index - 1];
+                                int UnlockBoolNum = -1;
+                                int UnlockTagNum = -1;
+
+                                //Loop backwards through the Exports to safely remove data
+                                for (int i = CurrentObjExport.Data.Count - 1; i >= 0; i--)
+                                {
+
+                                    if (CurrentObjExport.Data[i] is BoolPropertyData boolProp && boolProp.Name.ToString() == "Locked")
+                                    {
+                                        UnlockBoolNum = i;
+                                    }
+                                    if (CurrentObjExport.Data[i] is StructPropertyData StructProp && StructProp.Name.ToString() == "UnlockTag")
+                                    {
+                                        UnlockTagNum = i;
+                                    }
+                                }
+                                if (UnlockBoolNum > -1 || UnlockTagNum > -1)
+                                {
+                                    Console.WriteLine($"======== Modifying: {CurrentObjExport.ObjectName} ========");
+
+                                    //If both of them are going to be edited, which should always happen, +1 to the TagNum since after Removing one, the offsets would change
+                                    if (UnlockBoolNum != -1 && UnlockTagNum != -1)
+                                    {
+                                        UnlockTagNum--;
+                                    }
+
+                                    if (UnlockBoolNum > -1)
+                                    {
+                                        CurrentObjExport.Data.RemoveAt(UnlockBoolNum);
+                                    }
+                                    if (UnlockTagNum > -1)
+                                    {
+                                        CurrentObjExport.Data.RemoveAt(UnlockTagNum);
+                                    }
+
+                                    ModifiedAssets = true;
+                                    UnlockBoolNum = -1;
+                                    UnlockTagNum = -1;
+                                    Console.WriteLine($"Removed Locked States from {CurrentObjExport.ObjectName}");
+                                    Console.WriteLine();
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+                //Add new slots
                 if (JSONFileArray.Length > 0)
                 {
                     Array.Sort(JSONFileArray, new NaturalStringComparer());
 
-                    //BtnBlood and its Slot will be cloned for the new buttons
-                    NormalExport BtnBloodExport = (NormalExport)MenuOutfitAsset["Btn_Blood"];
-                    NormalExport OutfitsScrollExport = (NormalExport)MenuOutfitAsset["OutfitsScroll"];
-
                     NormalExport BP_Menu_Outfits = (NormalExport)MenuOutfitAsset["BP_Menu_Outfits_C"];
                     StructExport BP_StructMenu_Outfits = (StructExport)MenuOutfitAsset["BP_Menu_Outfits_C"];
+
+                    //BtnBlood and its Slot will be cloned for the new buttons
+                    NormalExport BtnBloodExport = (NormalExport)MenuOutfitAsset["Btn_Blood"];
                     FObjectProperty? BtnBloodScript = BP_StructMenu_Outfits.LoadedProperties.FirstOrDefault(x => x.Name.ToString() == "Btn_Blood") as FObjectProperty;
 
-                    if (BtnBloodExport == null || OutfitsScrollExport == null || BP_Menu_Outfits == null || BP_StructMenu_Outfits == null || BtnBloodScript == null)
+                    if (BtnBloodExport == null || BP_Menu_Outfits == null || BP_StructMenu_Outfits == null || BtnBloodScript == null)
                     {
                         Console.WriteLine("One or more necessary exports are missing in the 'BP_Menu_Outfits.uasset'. Please ensure the asset is correct.");
                         Proceed();
@@ -82,15 +160,14 @@ namespace SifuWardrobeManager
                                 {
                                     if (BtnBloodExport.Data[i].Name.ToString() == "Slot")
                                     {
-                                        bloodSlotIndex = int.Parse(BtnBloodExport.Data[i].RawValue.ToString());
+                                        bloodSlotIndex = int.Parse(BtnBloodExport.Data[i]?.RawValue?.ToString() ?? "0");
                                         break;
                                     }
                                 }
 
-                                NormalExport SlotBloodExport = (NormalExport)MenuOutfitAsset.Exports[bloodSlotIndex];
-
-                                //They need two clones??? or else you get a reference to the same object and it will overwrite the previous one.
                                 NormalExport newBtn = (NormalExport)BtnBloodExport.Clone();
+
+                                NormalExport SlotBloodExport = (NormalExport)MenuOutfitAsset.Exports[bloodSlotIndex];
                                 NormalExport newSlot = (NormalExport)SlotBloodExport.Clone();
 
                                 var clonedDataBtn = new List<PropertyData>();
@@ -221,7 +298,6 @@ namespace SifuWardrobeManager
 
                                         var tempOnFocus_Bindable = (StructPropertyData)oldValues[42];
                                         var tempOnClick_Bindable = (StructPropertyData)oldValues[43];
-
                                         var newBinding1 = (StructPropertyData)tempOnFocus_Bindable.Clone();
                                         var newBinding2 = (StructPropertyData)tempOnClick_Bindable.Clone();
 
@@ -234,7 +310,6 @@ namespace SifuWardrobeManager
                                                 str1.Value = FString.FromString("Btn" + btnname + "_" + slotCount);
                                             }
                                         }
-
                                         if (newBinding2.Value is List<PropertyData> fields2)
                                         {
                                             var objectName = fields2.FirstOrDefault(x => x.Name.ToString() == "ObjectName");
@@ -246,11 +321,9 @@ namespace SifuWardrobeManager
                                         }
 
                                         newValues = new PropertyData[oldValues.Length + 2];
-
                                         Array.Copy(oldValues, newValues, oldValues.Length);
                                         newValues[^2] = newBinding1;
                                         newValues[^1] = newBinding2;
-
 
                                         BP_Menu_Outfits.Data[i].RawValue = newValues;
                                     }
@@ -274,12 +347,8 @@ namespace SifuWardrobeManager
                                 Array.Copy(oldProperties, newProperties, oldProperties.Length);
                                 BP_StructMenu_Outfits.LoadedProperties = newProperties;
 
-
-
                                 Console.WriteLine($"Successfully added {name} to the BP_Menu_Outfits as a new button toggle.");
                                 Console.WriteLine("Expanding BP_FightingPlayer...");
-
-
 
                                 //Apply the Character Model to the New Slot
                                 NormalExport PlayerFightingExport = (NormalExport)PlayerAsset["PlayerFighting_GEN_VARIABLE"];
@@ -301,7 +370,7 @@ namespace SifuWardrobeManager
                                 var softPath = (FSoftObjectPath)newOutfit.Value[0].RawValue;
 
                                 //Correct the Mesh Pathway
-                                var newMesh = male.Replace("Sifu/Content/", "/Game/");
+                                var newMesh = male?.Replace("Sifu/Content/", "/Game/") ?? string.Empty;
                                 int lastIndex = newMesh.LastIndexOf('/');
                                 string FileName = lastIndex != -1 ? newMesh.Substring(lastIndex + 1) : newMesh;
                                 newMesh += "." + FileName;
@@ -324,7 +393,7 @@ namespace SifuWardrobeManager
                                 softPath = (FSoftObjectPath)newOutfit.Value[0].RawValue;
 
                                 //Correct the Mesh Pathway
-                                newMesh = female.Replace("Sifu/Content/", "/Game/");
+                                newMesh = female?.Replace("Sifu/Content/", "/Game/") ?? string.Empty;
                                 lastIndex = newMesh.LastIndexOf('/');
                                 FileName = lastIndex != -1 ? newMesh.Substring(lastIndex + 1) : newMesh;
                                 newMesh += "." + FileName;
@@ -340,12 +409,12 @@ namespace SifuWardrobeManager
                                 Gender_newValues[^1] = newOutfit;
                                 femaleoutfits.Value = Gender_newValues;
 
-
                                 Console.WriteLine($"Successfully added {name} to the BP_FightingPlayer as a new Female model with path:\n{newMesh}");
                                 Console.WriteLine();
+
+                                ModifiedAssets = true;
                             }
                         }
-                        
                     }
                     else
                     {
@@ -354,7 +423,27 @@ namespace SifuWardrobeManager
                         return;
                     }
 
-                    Console.WriteLine($"Finished Searching Through JSONs, Saving uassets.");
+                    Console.WriteLine("Finished Searching Through JSONs");
+                }
+                else
+                {
+                    Console.WriteLine("The 'SlotsToAdd' directory is empty so there's nothing to add.");
+                    if (ModifiedAssets)
+                    {
+                        Console.WriteLine();
+                    }
+                    else
+                    {
+                        Proceed();
+                        return;
+                    }
+                }
+
+                //Save Assets and Compile Pak
+                if (ModifiedAssets)
+                {
+                    Console.WriteLine("Saving Assets...");
+                    Console.WriteLine();
 
                     //Save UAssets
                     string ModFolder = "SifuCustomWardrobe";
@@ -377,8 +466,6 @@ namespace SifuWardrobeManager
                     MenuOutfitAsset.Write(Path.Combine(ModOutfitButtonPath, "BP_Menu_Outfits.uasset"));
                     PlayerAsset.Write(Path.Combine(ModFightingPlayerPath, "BP_FightingPlayer.uasset"));
 
-                    Thread.Sleep(1000);
-
                     //Generate Pak with UnrealPak
                     string UnrealPak = Directory.GetCurrentDirectory() + "\\UnrealPak.exe";
                     if (File.Exists(UnrealPak))
@@ -388,7 +475,7 @@ namespace SifuWardrobeManager
 
                         string PakPath = Directory.GetCurrentDirectory() + "\\" + ModFolder + "_9_P.pak";
                         string FileListPath = Directory.GetCurrentDirectory() + "\\filelist.txt";
-                        
+
                         //Create FilePath.txt so UnrealPak can generate Pak
                         if (!File.Exists(FileListPath))
                         {
@@ -413,11 +500,12 @@ namespace SifuWardrobeManager
                                 File.Copy(SigPath, NewSig, false);
                             }
                         }
+                        Thread.Sleep(1000);
                     }
                 }
                 else
                 {
-                    Console.WriteLine("The 'SlotsToAdd' directory is empty so there's nothing to add.");
+                    Console.WriteLine("Nothing was modified. I don't know how you got to the end of this function without the return being triggered...");
                     Proceed();
                     return;
                 }
@@ -433,8 +521,9 @@ namespace SifuWardrobeManager
                     }
                 }
                 Proceed();
+                return;
             }
-            Thread.Sleep(1000);
+            
             Console.WriteLine();
             Console.WriteLine("Sifu Wardrobe Manager was created by Kuroha Saenoki");
             Proceed();
@@ -483,7 +572,6 @@ namespace SifuWardrobeManager
                 Console.WriteLine($"This file will be skipped.");
                 return;
             }
-
         }
 
         static void Proceed()
@@ -492,18 +580,49 @@ namespace SifuWardrobeManager
             Console.ReadLine();
         }
 
-        public class NaturalStringComparer : IComparer<string>
+        public class NaturalStringComparer : IComparer<string?>
         {
-            [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-            private static extern int StrCmpLogicalW(string psz1, string psz2);
+            private static readonly Regex ChunkRegex = new Regex(@"(\d+)|(\D+)", RegexOptions.Compiled);
 
-            public int Compare(string x, string y)
+            public int Compare(string? x, string? y)
             {
                 if (x == null && y == null) return 0;
                 if (x == null) return -1;
                 if (y == null) return 1;
+                if (x == y) return 0;
 
-                return StrCmpLogicalW(x, y);
+                var chunksX = ChunkRegex.Matches(x);
+                var chunksY = ChunkRegex.Matches(y);
+                int minLength = Math.Min(chunksX.Count, chunksY.Count);
+
+                for (int i = 0; i < minLength; i++)
+                {
+                    string strX = chunksX[i].Value;
+                    string strY = chunksY[i].Value;
+
+                    if (char.IsDigit(strX[0]) && char.IsDigit(strY[0]))
+                    {
+                        if (long.TryParse(strX, out long numX) && long.TryParse(strY, out long numY))
+                        {
+                            int numCompare = numX.CompareTo(numY);
+                            if (numCompare != 0) return numCompare;
+                        }
+                        else
+                        {
+                            int lenCompare = strX.Length.CompareTo(strY.Length);
+                            if (lenCompare != 0) return lenCompare;
+
+                            int valCompare = string.Compare(strX, strY, StringComparison.Ordinal);
+                            if (valCompare != 0) return valCompare;
+                        }
+                    }
+                    else
+                    {
+                        int textCompare = string.Compare(strX, strY, StringComparison.CurrentCultureIgnoreCase);
+                        if (textCompare != 0) return textCompare;
+                    }
+                }
+                return chunksX.Count.CompareTo(chunksY.Count);
             }
         }
     }
