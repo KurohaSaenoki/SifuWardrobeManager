@@ -1,15 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using UAssetAPI;
 using UAssetAPI.ExportTypes;
 using UAssetAPI.FieldTypes;
@@ -31,6 +26,46 @@ namespace SifuWardrobeManager
 
         static void Main(string[] args)
         {
+            string FinalizedModFolder = "SifuCustomWardrobe";
+            string OutputFolder = Path.Combine(Directory.GetCurrentDirectory(), FinalizedModFolder);
+            string JSONFolder = Path.Combine(Directory.GetCurrentDirectory(), "SlotsToAdd");
+            string ModFolder = Path.Combine(Directory.GetCurrentDirectory(), "Mods");
+
+            string PakPath = Path.Combine(Directory.GetCurrentDirectory(), FinalizedModFolder + "_9_P.pak");
+            string NewSig = Path.Combine(Directory.GetCurrentDirectory(), FinalizedModFolder + "_9_P.sig");
+
+            try
+            {
+                if (File.Exists(PakPath))
+                {
+                    File.Delete(PakPath);
+                }
+                if (File.Exists(NewSig))
+                {
+                    File.Delete(NewSig);
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Couldn't Delete Existing Pak/Sig");
+                Proceed();
+                return;
+            }
+
+            if (!Directory.Exists(OutputFolder))
+            {
+                Directory.CreateDirectory(OutputFolder);
+            }
+            if (!Directory.Exists(ModFolder))
+            {
+                Directory.CreateDirectory(ModFolder);
+            }
+
+            string TempFolder = Path.Combine(OutputFolder, "Temp");
+            string ModBasePath = Path.Combine(OutputFolder, "Sifu", "Content");
+            string ModOutfitButtonPath = Path.Combine(ModBasePath, "UI", "Blueprints", "Menus", "Outfits");
+            string ModFightingPlayerPath = Path.Combine(ModBasePath, "Blueprints");
+
             string[] NecessaryFiles = {
                 Path.Combine(Directory.GetCurrentDirectory(), "ORIGINALASSETS", "BP_Menu_Outfits.uasset"),
                 Path.Combine(Directory.GetCurrentDirectory(), "ORIGINALASSETS", "BP_Menu_Outfits.uexp"),
@@ -41,18 +76,11 @@ namespace SifuWardrobeManager
             bool DoFilesExist = NecessaryFiles.All(File.Exists);
             if (DoFilesExist)
             {
+                ClearFolder(OutputFolder);
+
                 UAsset MenuOutfitAsset = new UAsset(NecessaryFiles[0], EngineVersion.VER_UE4_26);
                 UAsset PlayerAsset = new UAsset(NecessaryFiles[2], EngineVersion.VER_UE4_26);
 
-                string SlotsToAddPath = Path.Combine(Directory.GetCurrentDirectory(), "SlotsToAdd");
-                if (!Directory.Exists(SlotsToAddPath))
-                {
-                    Directory.CreateDirectory(SlotsToAddPath);
-                }
-
-                string[] JSONFileArray = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "SlotsToAdd"));
-
-                //Do this early so we can modify existing Exports before adding
                 NormalExport OutfitsScrollExport = (NormalExport)MenuOutfitAsset["OutfitsScroll"];
                 if (OutfitsScrollExport == null)
                 {
@@ -61,71 +89,382 @@ namespace SifuWardrobeManager
                     return;
                 }
 
-                //Modify Current Slots to make them unlocked by default
-                Console.WriteLine("Unlock All Vanilla Costumes? [Y/N] (Default Value: N)");
-                string? UnlockOutfitsStr = Console.ReadLine();
-                Console.WriteLine();
-                if (UnlockOutfitsStr == "Y" || UnlockOutfitsStr == "y")
+                AllowUserToUnlockOutfits(MenuOutfitAsset, OutfitsScrollExport);
+
+                string[] ModFileArray = GatherFiles(ModFolder, "*.pak");
+                
+                //Remove Sort IDs for now so can detect .Pak mods that have already had a .json generated for them
+                string[] JSONFileArray = GatherFiles(JSONFolder, "*.json");
+                for (int i = 0; i < JSONFileArray.Length; i++)
                 {
-                    if (OutfitsScrollExport["Slots"] is ArrayPropertyData arrProp)
+                    string SortIDToRemove = ReturnFileNameWithoutSort(Path.GetFileNameWithoutExtension(JSONFileArray[i]));
+                    JSONFileArray[i] = Path.GetFileNameWithoutExtension(JSONFileArray[i]).Substring(SortIDToRemove.Length);
+                }
+
+                //If UnrealPak exists, unpak all mods in the "Mods" folder, update their paths/name maps, then add them to the wardrobe mod
+                string UnrealPakPath = Directory.GetCurrentDirectory() + "\\UnrealPak.exe";
+                if (File.Exists(UnrealPakPath))
+                {
+                    if (ModFileArray.Length > 0)
                     {
-                        foreach (ObjectPropertyData prop in arrProp.Value)
+                        Console.WriteLine($"============= Detected UnrealPak, Unpacking Mods =============");
+                        Console.WriteLine();
+
+                        foreach (string ModPath in ModFileArray)
                         {
-                            NormalExport CurrentObjExport = (NormalExport)MenuOutfitAsset.Exports[prop.Value.Index - 1];
+                            string CurrentOutputFolder = Path.Combine(TempFolder, Path.GetFileNameWithoutExtension(ModPath));
+                            Console.WriteLine("Currently Unpacking Mod: " + Path.GetFileNameWithoutExtension(ModPath));
 
-                            if (CurrentObjExport?.Data.FirstOrDefault(x => x.Name.ToString() == "Content") is ObjectPropertyData ContentObjProp)
+                            //Unpak Mods
+                            ProcessStartInfo startInfo = new ProcessStartInfo();
+                            startInfo.FileName = "UnrealPak.exe";
+                            startInfo.Arguments = $"\"{ModPath}\" -extract \"{CurrentOutputFolder}\"";
+
+                            // Capture the process instance and wait for it to exit
+                            using (var process = Process.Start(startInfo))
                             {
-                                CurrentObjExport = (NormalExport)MenuOutfitAsset.Exports[ContentObjProp.Value.Index - 1];
-                                int UnlockBoolNum = -1;
-                                int UnlockTagNum = -1;
-
-                                //Loop backwards through the Exports to safely remove data
-                                for (int i = CurrentObjExport.Data.Count - 1; i >= 0; i--)
+                                if (process != null)
                                 {
-
-                                    if (CurrentObjExport.Data[i] is BoolPropertyData boolProp && boolProp.Name.ToString() == "Locked")
-                                    {
-                                        UnlockBoolNum = i;
-                                    }
-                                    if (CurrentObjExport.Data[i] is StructPropertyData StructProp && StructProp.Name.ToString() == "UnlockTag")
-                                    {
-                                        UnlockTagNum = i;
-                                    }
+                                    process.WaitForExit();
                                 }
-                                if (UnlockBoolNum > -1 || UnlockTagNum > -1)
+                                else
                                 {
-                                    Console.WriteLine($"======== Modifying: {CurrentObjExport.ObjectName} ========");
+                                    Console.WriteLine("UnrealPak failed to launch...?");
+                                    Proceed();
+                                }
+                            }
+                        }
 
-                                    //If both of them are going to be edited, which should always happen, +1 to the TagNum since after Removing one, the offsets would change
-                                    if (UnlockBoolNum != -1 && UnlockTagNum != -1)
-                                    {
-                                        UnlockTagNum--;
-                                    }
+                        Console.WriteLine();
+                        Console.WriteLine("============= Finished Unpacking Mods =============");
+                        Console.WriteLine();
+                        Console.WriteLine("============= Updating Unpacked Mods with Unique Pathways =============");
+                        Console.WriteLine();
 
-                                    if (UnlockBoolNum > -1)
-                                    {
-                                        CurrentObjExport.Data.RemoveAt(UnlockBoolNum);
-                                    }
-                                    if (UnlockTagNum > -1)
-                                    {
-                                        CurrentObjExport.Data.RemoveAt(UnlockTagNum);
-                                    }
+                        //Use UEPath Updater to automatically update their Name Maps, then File Paths and lastly create a .json for the slot if one doesn't already exist
+                        foreach (string ModPath in ModFileArray)
+                        {
+                            string CurrentModName = Path.GetFileNameWithoutExtension(ModPath);
+                            Console.WriteLine($"========================== Current Mod: {CurrentModName} ==========================");
+                            Console.WriteLine();
 
-                                    ModifiedAssets = true;
-                                    UnlockBoolNum = -1;
-                                    UnlockTagNum = -1;
-                                    Console.WriteLine($"Removed Locked States from {CurrentObjExport.ObjectName}");
+                            string CurrentOutputFolder = Path.Combine(TempFolder, CurrentModName);
+                            string[] AllFiles = Directory.EnumerateFiles(CurrentOutputFolder, "*.*", SearchOption.AllDirectories).Where(s => s.EndsWith(".uasset")).ToArray();
+                            string M_MeshPath = "";
+                            string W_MeshPath = "";
+                            if (AllFiles.Length > 0)
+                            {
+                                foreach (string UAssetPath in AllFiles)
+                                {
+                                    Console.WriteLine($"============= Modifying Asset: {Path.GetFileNameWithoutExtension(UAssetPath)} =============");
                                     Console.WriteLine();
+
+                                    UAsset CurrentAsset = new UAsset(UAssetPath, EngineVersion.VER_UE4_26);
+                                    string StringFind = "/Game/Characters/MainChar/";
+                                    string StringReplace = "/Game/" + CurrentModName + "/";
+
+                                    string NewFileName = "";
+                                    string NewFilePath = "";
+                                    string UAssetPathExportName = "";
+                                    string AnotherNameMapWithExportName = "";
+                                    bool IsSkelMesh = false;
+
+                                    if (!CurrentAsset.VerifyBinaryEquality())
+                                    {
+                                        Console.WriteLine("Invalid Binary Equality... Something is wrong with this asset...");
+                                        Proceed();
+                                        return;
+                                    }
+
+                                    //Read Exports
+                                    try
+                                    {
+                                        //Get Filename of Asset
+                                        for (int i = 0; i < CurrentAsset.Exports.Count; i++)
+                                        {
+                                            //The Default__ and _C checks should be unnecessary, but whatever
+                                            if (CurrentAsset.Exports[i].OuterIndex.ToString() == "0" && (!CurrentAsset.Exports[i].ObjectName.ToString().StartsWith("Default__")))
+                                            {
+                                                if (CurrentAsset.Exports[i].ObjectName.ToString().EndsWith("_C"))
+                                                {
+                                                    UAssetPathExportName = CurrentAsset.Exports[i].ObjectName.ToString()[..^2];
+                                                }
+                                                else
+                                                {
+                                                    UAssetPathExportName = CurrentAsset.Exports[i].ObjectName.ToString();
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        Console.WriteLine("Failed to Look Through Exports... Something is wrong with this asset...");
+                                        Proceed();
+                                        return;
+                                    }
+
+                                    //Read Imports
+                                    try
+                                    {
+                                        //Check for if linked to another Asset that uses the same name...
+                                        foreach (var import in CurrentAsset.Imports)
+                                        {
+                                            try
+                                            {
+                                                if (import?.ClassName?.Value != null && import?.ObjectName?.Value != null && UAssetPathExportName != null)
+                                                {
+                                                    string className = import.ClassName.Value.ToString();
+                                                    string objectName = import.ObjectName.Value.ToString();
+
+                                                    if (className == "Package" && objectName.StartsWith("/Game/") && objectName.EndsWith(UAssetPathExportName))
+                                                    {
+                                                        AnotherNameMapWithExportName = objectName;
+                                                    }
+                                                    if (className == "Class" && objectName == "SkeletalMesh")
+                                                    {
+                                                        IsSkelMesh = true;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine("Failed to Look Through Imports... Something is wrong with this asset...");
+                                                    Proceed();
+                                                    return;
+                                                }
+                                            }
+                                            catch
+                                            {
+                                                Console.WriteLine("Failed to Look Through Imports... Something is wrong with this asset...");
+                                                Proceed();
+                                                return;
+                                            }
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        Console.WriteLine("Failed to Look Through Imports... Something is wrong with this asset...");
+                                        Proceed();
+                                        return;
+                                    }
+
+                                    //Update NameMap
+                                    try
+                                    {
+                                        //Update Name Map Entries
+                                        for (int i = 0; i < CurrentAsset.GetNameMapIndexList().Count; i++)
+                                        {
+                                            string CurrentString = CurrentAsset.GetNameReference(i).ToString();
+                                            string UpdatedString = CurrentString.Replace(StringFind, StringReplace);
+
+                                            if (UpdatedString != CurrentString)
+                                            {
+                                                CurrentAsset.SetNameReference(i, (FString)UpdatedString);
+                                                Console.WriteLine($"Updated NameMap Index {i}: {UpdatedString}");
+
+                                                //Update File Path Based on Name Map Entry
+                                                string NameMapFile = Path.GetFileNameWithoutExtension(CurrentString);
+                                                if (UAssetPathExportName != "" && NameMapFile.EndsWith(UAssetPathExportName) && CurrentString.StartsWith("/Game/") && CurrentString != AnotherNameMapWithExportName)
+                                                {
+                                                    NewFileName = Path.GetFileNameWithoutExtension(UpdatedString);
+                                                    NewFilePath = Path.GetDirectoryName("/Sifu/Content/" + UpdatedString.Substring(6)) ?? "";
+                                                    NewFilePath = NewFilePath.Replace('\\', '/');
+
+                                                    if (!NewFilePath.EndsWith("/"))
+                                                    {
+                                                        NewFilePath += "/";
+                                                    }
+                                                    if (NewFilePath.StartsWith("//"))
+                                                    {
+                                                        NewFilePath = NewFilePath.Substring(1);
+                                                    }
+                                                    NewFilePath = NewFilePath + NewFileName;
+
+                                                    if (CurrentString.StartsWith("/Game/Characters/MainChar/M/") && IsSkelMesh && NewFilePath.StartsWith("/Sifu/Content/"))
+                                                    {
+                                                        M_MeshPath = NewFilePath.Substring(1);
+                                                    }
+                                                    if (CurrentString.StartsWith("/Game/Characters/MainChar/W/") && IsSkelMesh && NewFilePath.StartsWith("/Sifu/Content/"))
+                                                    {
+                                                        W_MeshPath = NewFilePath.Substring(1);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        Console.WriteLine("Failed to Look Through Name Maps... Something is wrong with this asset...");
+                                        Proceed();
+                                        return;
+                                    }
+
+                                    //Save Asset
+                                    try
+                                    {
+                                        string NewFile = "";
+                                        string NewPath = "";
+                                        string ubulkPath = UAssetPath.Replace(".uasset", ".ubulk");
+
+                                        NewFile = NewFilePath.Replace('/', Path.DirectorySeparatorChar);
+                                        NewFile = OutputFolder + NewFile + ".uasset";
+                                        NewPath = Path.GetDirectoryName(NewFile) ?? "";
+
+                                        if (File.Exists(ubulkPath))
+                                        {
+                                            if (!Path.Exists(NewPath))
+                                            {
+                                                Directory.CreateDirectory(NewPath);
+                                            }
+
+                                            if (ubulkPath != NewFile.Replace(".uasset", ".ubulk"))
+                                            {
+                                                File.Copy(ubulkPath, NewFile.Replace(".uasset", ".ubulk"), true);
+                                            }
+                                        }
+
+                                        Console.WriteLine();
+                                        Console.WriteLine($"Saving Asset as: " + Path.GetFileNameWithoutExtension(NewFile));
+                                        Console.WriteLine();
+
+                                        if (!string.IsNullOrEmpty(NewPath))
+                                        {
+                                            try
+                                            {
+                                                Directory.CreateDirectory(NewPath);
+                                                CurrentAsset.Write(NewFile);
+                                            }
+                                            catch
+                                            {
+                                                Console.WriteLine("Failed to Save Asset... Possibly a lack of storage?");
+                                                Proceed();
+                                                return;
+                                            }
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        Console.WriteLine("Failed to Save Asset... Something is wrong with this asset...");
+                                        Proceed();
+                                        return;
+                                    }
                                 }
 
+                                //Create a new JSON if one does not already exist
+                                if (!JSONFileArray.Contains(CurrentModName))
+                                {
+                                    Console.WriteLine($"============= Generating JSON: {CurrentModName} =============");
+                                    string CurrentJson = Path.Combine(JSONFolder, CurrentModName + ".json");
+                                    if (!File.Exists(CurrentJson) && (!string.IsNullOrEmpty(M_MeshPath) || !string.IsNullOrEmpty(W_MeshPath)))
+                                    {
+                                        if (string.IsNullOrEmpty(M_MeshPath))
+                                        {
+                                            M_MeshPath = W_MeshPath;
+                                        }
+                                        if (string.IsNullOrEmpty(W_MeshPath))
+                                        {
+                                            W_MeshPath = M_MeshPath;
+                                        }
+
+                                        JObject Json = new JObject();
+
+                                        Console.WriteLine($"Sort Order: (Default Value: 0)\n" +
+                                            $"Anything before 900 will be loaded immediately after the vanilla outfits.\n" +
+                                            $"\t900-914 are the Main Characters\n" +
+                                            $"\t1000-1014 is Prologue Grunts\n" +
+                                            $"\t2000-2048 is Squats Grunts\n" +
+                                            $"\t3000-3061 is Club Grunts\n" +
+                                            $"\t4000-4054 is Museum Grunts\n" +
+                                            $"\t5000-5033 is Bank Grunts\n" +
+                                            $"\t6000-6023 is Sanctuary Grunts");
+                                        string UserInputSort = Console.ReadLine() ?? "0";
+
+                                        Console.WriteLine();
+                                        int SortId = 0;
+                                        try
+                                        {
+                                            SortId = int.Parse(UserInputSort);
+                                        }
+                                        catch
+                                        {
+                                            UserInputSort = "0";
+                                            Console.WriteLine("Invalid Sort ID, Defaulting to 0");
+                                            Proceed();
+                                        }
+                                        CurrentJson = Path.Combine(JSONFolder, UserInputSort + "_" + CurrentModName + ".json");
+
+                                        Console.WriteLine($"Name: (Default Value: {CurrentModName})");
+                                        string UserInputName = Console.ReadLine() ?? CurrentModName;
+                                        Console.WriteLine();
+                                        Json.Add("Name", UserInputName);
+
+                                        Console.WriteLine($"Description: (Please credit the mod creator here)");
+                                        string UserInputDescription = Console.ReadLine() ?? "";
+                                        Console.WriteLine();
+                                        Json.Add("Description", UserInputDescription);
+
+                                        JObject NestedModel = new JObject();
+                                        NestedModel.Add("Male", M_MeshPath);
+                                        NestedModel.Add("Female", W_MeshPath);
+                                        Json.Add("Model", NestedModel);
+
+                                        try
+                                        {
+                                            File.WriteAllText(CurrentJson, Json.ToString(Formatting.Indented));
+                                        }
+                                        catch
+                                        {
+                                            Console.WriteLine("Failed to Create JSON...  Possibly a lack of storage?");
+                                            Proceed();
+                                            return;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (File.Exists(CurrentJson))
+                                        {
+                                            Console.WriteLine("Json already exists with the name: " + Path.GetFileNameWithoutExtension(CurrentJson));
+                                        }
+                                        else
+                                        {
+                                            if (string.IsNullOrEmpty(M_MeshPath) && string.IsNullOrEmpty(W_MeshPath))
+                                            {
+                                                Console.WriteLine("Failed to generate a Json for this mod...\n" +
+                                                    "Couldn't automatically find a Mesh to use for this Pak mod...\n" +
+                                                    "You should remove this pak from the Mod folder and port it manually.");
+                                                Proceed();
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                                Console.WriteLine();
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{Path.GetFileNameWithoutExtension(ModPath)} does not contain any .uassets to update...?");
+                                Proceed();
+                                return;
                             }
                         }
                     }
                 }
 
+                //Clean up TempFolder
+                if (Path.Exists(TempFolder))
+                {
+                    Directory.Delete(TempFolder, true);
+                }
+
+                //Resetup this array with it's path + sort id included
+                JSONFileArray = GatherFiles(JSONFolder, "*.json");
+                
                 //Add new slots
                 if (JSONFileArray.Length > 0)
                 {
+                    Console.WriteLine($"========================== Creating new Costume Slots ==========================");
+                    Console.WriteLine();
+
                     Array.Sort(JSONFileArray, new NaturalStringComparer());
 
                     NormalExport BP_Menu_Outfits = (NormalExport)MenuOutfitAsset["BP_Menu_Outfits_C"];
@@ -256,7 +595,9 @@ namespace SifuWardrobeManager
                                 Array.Copy(oldValues, newValues, oldValues.Length);
                                 newValues[^1] = newSlotProperty;
                                 arrProp.Value = newValues;
-
+                                
+                                //I only did this because this is what the Character Select mod had done too, seems unnecessary and breaks the scrollbar/selected slot button
+                                /*
                                 //Edit both WidgetNavigations to use our Btn as the focus point
                                 var widgetNavis = MenuOutfitAsset.Exports.OfType<NormalExport>().Where(x => x.ObjectName.ToString() == "WidgetNavigation_0").ToList();
                                 NormalExport WidgetNavi1 = widgetNavis[0];
@@ -288,6 +629,7 @@ namespace SifuWardrobeManager
                                         }
                                     }
                                 }
+                                */
 
                                 //Add Bindings
                                 for (int i = 0; i < BP_Menu_Outfits.Data.Count; i++)
@@ -445,14 +787,6 @@ namespace SifuWardrobeManager
                     Console.WriteLine("Saving Assets...");
                     Console.WriteLine();
 
-                    //Save UAssets
-                    string ModFolder = "SifuCustomWardrobe";
-                    string ModBasePath = ModFolder + "\\Sifu\\Content\\";
-                    string ModOutfitButtonPath = "UI\\Blueprints\\Menus\\Outfits\\";
-                    string ModFightingPlayerPath = "Blueprints\\";
-                    ModOutfitButtonPath = Directory.GetCurrentDirectory() + "\\" + ModBasePath + ModOutfitButtonPath;
-                    ModFightingPlayerPath = Directory.GetCurrentDirectory() + "\\" + ModBasePath + ModFightingPlayerPath;
-
                     if (!Directory.Exists(ModOutfitButtonPath))
                     {
                         Directory.CreateDirectory(ModOutfitButtonPath);
@@ -462,45 +796,80 @@ namespace SifuWardrobeManager
                         Directory.CreateDirectory(ModFightingPlayerPath);
                     }
 
-                    //Finished so lets save.
-                    MenuOutfitAsset.Write(Path.Combine(ModOutfitButtonPath, "BP_Menu_Outfits.uasset"));
-                    PlayerAsset.Write(Path.Combine(ModFightingPlayerPath, "BP_FightingPlayer.uasset"));
-
-                    //Generate Pak with UnrealPak
-                    string UnrealPak = Directory.GetCurrentDirectory() + "\\UnrealPak.exe";
-                    if (File.Exists(UnrealPak))
+                    try
                     {
-                        Console.WriteLine($"Detected UnrealPak, Generating Pak...");
-                        Console.WriteLine();
+                        //Finished so lets save.
+                        MenuOutfitAsset.Write(Path.Combine(ModOutfitButtonPath, "BP_Menu_Outfits.uasset"));
+                        PlayerAsset.Write(Path.Combine(ModFightingPlayerPath, "BP_FightingPlayer.uasset"));
 
-                        string PakPath = Directory.GetCurrentDirectory() + "\\" + ModFolder + "_9_P.pak";
-                        string FileListPath = Directory.GetCurrentDirectory() + "\\filelist.txt";
-
-                        //Create FilePath.txt so UnrealPak can generate Pak
-                        if (!File.Exists(FileListPath))
+                        //Generate Pak with UnrealPak
+                        if (File.Exists(UnrealPakPath))
                         {
-                            string FileListContent = "\"" + Directory.GetCurrentDirectory() + "\\" + ModFolder + "\\*.*\" \"..\\..\\..\\*.*\"";
-                            File.WriteAllText(FileListPath, FileListContent);
-                        }
+                            Console.WriteLine($"Detected UnrealPak, Generating Pak...");
+                            Console.WriteLine();
 
-                        //Generate Pak
-                        ProcessStartInfo startInfo = new ProcessStartInfo();
-                        startInfo.FileName = "UnrealPak.exe";
-                        startInfo.Arguments = $"\"{PakPath}\" -create=\"{FileListPath}\" -compress";
-                        Process.Start(startInfo);
+                            string FileListPath = Path.Combine(Directory.GetCurrentDirectory(), "filelist.txt");
 
-                        //Copy over .sig
-                        string SigPath = Directory.GetCurrentDirectory() + "\\ORIGINALASSETS\\pakchunk0-WindowsNoEditor.sig";
-                        string NewSig = Directory.GetCurrentDirectory() + "\\" + ModFolder + "_9_P.sig";
-
-                        if (File.Exists(SigPath))
-                        {
-                            if (!File.Exists(NewSig))
+                            //Create FilePath.txt so UnrealPak can generate Pak
+                            if (!File.Exists(FileListPath))
                             {
-                                File.Copy(SigPath, NewSig, false);
+                                string FileListContent = "\"" + Directory.GetCurrentDirectory() + "\\" + FinalizedModFolder + "\\*.*\" \"..\\..\\..\\*.*\"";
+
+                                try
+                                {
+                                    File.WriteAllText(FileListPath, FileListContent);
+                                }
+                                catch
+                                {
+                                    Console.WriteLine("Failed to Create Filelist.txt?");
+                                    Proceed();
+                                    return;
+                                }
+                            }
+
+                            //Generate Pak
+                            ProcessStartInfo startInfo = new ProcessStartInfo();
+                            startInfo.FileName = "UnrealPak.exe";
+                            startInfo.Arguments = $"\"{PakPath}\" -create=\"{FileListPath}\" -compress";
+                            using (var process = Process.Start(startInfo))
+                            {
+                                if (process != null)
+                                {
+                                    process.WaitForExit();
+                                }
+                                else
+                                {
+                                    Console.WriteLine("UnrealPak failed to launch...?");
+                                    Proceed();
+                                }
+                            }
+
+                            //Copy over .sig
+                            string SigPath = Path.Combine(Directory.GetCurrentDirectory(), "ORIGINALASSETS", "pakchunk0-WindowsNoEditor.sig");
+
+                            if (File.Exists(SigPath))
+                            {
+                                if (!File.Exists(NewSig))
+                                {
+                                    try
+                                    {
+                                        File.Copy(SigPath, NewSig, false);
+                                    }
+                                    catch
+                                    {
+                                        Console.WriteLine("Failed to Copy Detected .sig... Possibly a lack of storage?");
+                                        Proceed();
+                                        return;
+                                    }
+                                }
                             }
                         }
-                        Thread.Sleep(1000);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Failed to Save Assets... Possibly a lack of storage?");
+                        Proceed();
+                        return;
                     }
                 }
                 else
@@ -509,6 +878,55 @@ namespace SifuWardrobeManager
                     Proceed();
                     return;
                 }
+
+                if (File.Exists(PakPath))
+                {
+                    if (Directory.Exists(OutputFolder))
+                    {
+                        Directory.Delete(OutputFolder, true);
+                    }
+
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    if (File.Exists(NewSig))
+                    {
+                        Console.WriteLine("SifuCustomWardrobe was Successfully Compiled!\n\n" +
+                                          "Install both the SifuCustomWardrobe_9_P.pak and .sig into your \"Sifu\\Sifu\\Content\\Paks\\~mods\" folder.\n" +
+                                          "If you don't already have a \"~mods\" folder, create it.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("SifuCustomWardrobe was Successfully Compiled!\n\n" +
+                                          "Install the SifuCustomWardrobe_9_P.pak into your \"Sifu\\Sifu\\Content\\Paks\\~mods\" folder.\n" +
+                                          "If you don't already have a \"~mods\" folder, create it.\n\n" +
+                                          "Since you for some reason, deleted the pakchunk0-WindowsNoEditor.sig in \"ORIGINALASSETS\"\n" +
+                                          "You'll have to clone your own game .sig, and rename it to SifuCustomWardrobe_9_P.sig\n" +
+                                          "Ensure that the .sig is in the same spot as the mod .Pak");
+                    }
+                    Console.WriteLine();
+                }
+                else
+                {
+                    if (Directory.Exists(OutputFolder) &&
+                        File.Exists(Path.Combine(ModOutfitButtonPath, "BP_Menu_Outfits.uasset")) && 
+                        File.Exists(Path.Combine(ModFightingPlayerPath, "BP_FightingPlayer.uasset")))
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine();
+                        Console.WriteLine();
+                        Console.WriteLine("SifuCustomWardrobe Assets Successfully Created!\n\n" +
+                                          "Download UnrealPak and convert the folder into a .Pak\n" +
+                                          "Insert the Compiled .Pak into your \"Sifu\\Sifu\\Content\\Paks\\~mods\" folder.\n" +
+                                          "If you don't already have a \"~mods\" folder, create it.\n" +
+                                          "After that, you'll have to clone your own game .sig, and rename it to SifuCustomWardrobe_9_P.sig\n\n" + 
+                                          "If you include the UnrealPak.exe in this folder, the .Pak and .Sig will automatically be handled for you if possible.");
+                        Console.WriteLine();
+                    }
+                }
+
+                Console.WriteLine("Sifu Wardrobe Manager was created by Kuroha Saenoki");
+                Proceed();
             }
             else
             {
@@ -523,63 +941,99 @@ namespace SifuWardrobeManager
                 Proceed();
                 return;
             }
-            
-            Console.WriteLine();
-            Console.WriteLine("Sifu Wardrobe Manager was created by Kuroha Saenoki");
-            Proceed();
+
         }
 
-        static void ParseJSON(string filepath)
+        private static void ClearFolder(string StrPath)
         {
-            name = "";
-            desc = "";
-            male = "";
-            female = "";
-
-            JObject Json = JObject.Parse(File.ReadAllText(filepath));
-
-            bool[] NecessaryKeys = {
-                !string.IsNullOrEmpty((string?)Json.SelectToken("Name")),
-                !string.IsNullOrEmpty((string?)Json.SelectToken("Model.Male")),
-                !string.IsNullOrEmpty((string?)Json.SelectToken("Model.Female"))
-            };
-
-            bool allKeysExist = NecessaryKeys.All(keyExists => keyExists);
-            if (allKeysExist)
+            if (Directory.Exists(StrPath))
             {
-                name = (string?)Json.SelectToken("Name");
-                if (Json.SelectToken("Description") != null)
+                foreach (string file in Directory.GetFiles(StrPath))
                 {
-                    desc = (string?)Json.SelectToken("Description");
+                    File.Delete(file);
                 }
-                male = (string?)Json.SelectToken("Model.Male");
-                female = (string?)Json.SelectToken("Model.Female");
-            }
-            else
-            {
-                if (string.IsNullOrEmpty((string?)Json.SelectToken("Name")))
+                foreach (string dir in Directory.GetDirectories(StrPath))
                 {
-                    Console.WriteLine("Key 'Name' is missing or empty.");
+                    Directory.Delete(dir, true);
                 }
-                if (string.IsNullOrEmpty((string?)Json.SelectToken("Model.Male")))
-                {
-                    Console.WriteLine("Key 'Model.Male' is missing or empty.");
-                }
-                if (string.IsNullOrEmpty((string?)Json.SelectToken("Model.Female")))
-                {
-                    Console.WriteLine("Key 'Model.Female' is missing or empty.");
-                }
-                Console.WriteLine($"This file will be skipped.");
-                return;
             }
         }
-
+        private static string[] GatherFiles(string StrPath, string Extension)
+        {
+            if (!Directory.Exists(StrPath))
+            {
+                Directory.CreateDirectory(StrPath);
+            }
+            return Directory.GetFiles(StrPath, Extension);
+        }
         static void Proceed()
         {
             Console.WriteLine("Press any key to continue . . .");
             Console.ReadLine();
         }
+        static void AllowUserToUnlockOutfits(UAsset AssetToModify, NormalExport ExportToLoad)
+        {
+            //Modify Current Slots to make them unlocked by default
+            Console.WriteLine("Unlock All Vanilla Costumes? [Y/N] (Default Value: N)");
+            string? UnlockOutfitsStr = Console.ReadLine();
+            Console.WriteLine();
+            if (UnlockOutfitsStr == "Y" || UnlockOutfitsStr == "y")
+            {
+                if (ExportToLoad["Slots"] is ArrayPropertyData arrProp)
+                {
+                    foreach (ObjectPropertyData prop in arrProp.Value)
+                    {
+                        NormalExport CurrentObjExport = (NormalExport)AssetToModify.Exports[prop.Value.Index - 1];
 
+                        if (CurrentObjExport?.Data.FirstOrDefault(x => x.Name.ToString() == "Content") is ObjectPropertyData ContentObjProp)
+                        {
+                            CurrentObjExport = (NormalExport)AssetToModify.Exports[ContentObjProp.Value.Index - 1];
+                            int UnlockBoolNum = -1;
+                            int UnlockTagNum = -1;
+
+                            //Loop backwards through the Exports to safely remove data
+                            for (int i = CurrentObjExport.Data.Count - 1; i >= 0; i--)
+                            {
+
+                                if (CurrentObjExport.Data[i] is BoolPropertyData boolProp && boolProp.Name.ToString() == "Locked")
+                                {
+                                    UnlockBoolNum = i;
+                                }
+                                if (CurrentObjExport.Data[i] is StructPropertyData StructProp && StructProp.Name.ToString() == "UnlockTag")
+                                {
+                                    UnlockTagNum = i;
+                                }
+                            }
+                            if (UnlockBoolNum > -1 || UnlockTagNum > -1)
+                            {
+                                Console.WriteLine($"======== Modifying Costume Slot: {CurrentObjExport.ObjectName} ========");
+
+                                //If both of them are going to be edited, which should always happen, +1 to the TagNum since after Removing one, the offsets would change
+                                if (UnlockBoolNum != -1 && UnlockTagNum != -1)
+                                {
+                                    UnlockTagNum--;
+                                }
+
+                                if (UnlockBoolNum > -1)
+                                {
+                                    CurrentObjExport.Data.RemoveAt(UnlockBoolNum);
+                                }
+                                if (UnlockTagNum > -1)
+                                {
+                                    CurrentObjExport.Data.RemoveAt(UnlockTagNum);
+                                }
+
+                                ModifiedAssets = true;
+                                UnlockBoolNum = -1;
+                                UnlockTagNum = -1;
+                                Console.WriteLine($"Removed Locked States from {CurrentObjExport.ObjectName}");
+                                Console.WriteLine();
+                            }
+                        }
+                    }
+                }
+            }
+        }
         public class NaturalStringComparer : IComparer<string?>
         {
             private static readonly Regex ChunkRegex = new Regex(@"(\d+)|(\D+)", RegexOptions.Compiled);
@@ -623,6 +1077,62 @@ namespace SifuWardrobeManager
                     }
                 }
                 return chunksX.Count.CompareTo(chunksY.Count);
+            }
+        }
+        private static string ReturnFileNameWithoutSort(string input = "")
+        {
+            // Matches one or more digits at the start of the string
+            Match match = Regex.Match(input, @"^\d+");
+
+            if (match.Success)
+            {
+                return match.Value + "_";
+            }
+
+            return "";
+        }
+        static void ParseJSON(string filepath)
+        {
+            name = "";
+            desc = "";
+            male = "";
+            female = "";
+
+            JObject Json = JObject.Parse(File.ReadAllText(filepath));
+
+            bool[] NecessaryKeys = {
+                !string.IsNullOrEmpty((string?)Json.SelectToken("Name")),
+                !string.IsNullOrEmpty((string?)Json.SelectToken("Model.Male")),
+                !string.IsNullOrEmpty((string?)Json.SelectToken("Model.Female"))
+            };
+
+            bool allKeysExist = NecessaryKeys.All(keyExists => keyExists);
+            if (allKeysExist)
+            {
+                name = (string?)Json.SelectToken("Name");
+                if (Json.SelectToken("Description") != null)
+                {
+                    desc = (string?)Json.SelectToken("Description");
+                }
+                male = (string?)Json.SelectToken("Model.Male");
+                female = (string?)Json.SelectToken("Model.Female");
+            }
+            else
+            {
+                if (string.IsNullOrEmpty((string?)Json.SelectToken("Name")))
+                {
+                    Console.WriteLine("Key 'Name' is missing or empty.");
+                }
+                if (string.IsNullOrEmpty((string?)Json.SelectToken("Model.Male")))
+                {
+                    Console.WriteLine("Key 'Model.Male' is missing or empty.");
+                }
+                if (string.IsNullOrEmpty((string?)Json.SelectToken("Model.Female")))
+                {
+                    Console.WriteLine("Key 'Model.Female' is missing or empty.");
+                }
+                Console.WriteLine($"This file will be skipped.");
+                return;
             }
         }
     }
