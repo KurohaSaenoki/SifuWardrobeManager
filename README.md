@@ -1,36 +1,32 @@
 
 # SifuWardrobeManager
 
-Built in C# with Visual Studio 2026, Requires [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
+Built in C# with Visual Studio 2026, Requires [.NET 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
 
-Uses [UAssetAPI](https://github.com/atenfyr/UAssetAPI) to open the assets in "ORIGINALASSETS" and then expand both of them, saves them as new assets, then uses [UnrealPak](https://unrealpak.com/) to compile the mod for you.
+Uses [UnrealPak](https://unrealpak.com/) to Unpackage Replacer mods.
+Modifies those assets using [UAssetAPI](https://github.com/atenfyr/UAssetAPI).
+Modifies the assets in the "ORIGINALASSETS" folder to add new select-able slots based on .jsons inside the "SlotsToAdd" folder.
+Recompiles the assets into a .pak paired with a .sig, ready to be inserted into the game.
 
-[Newtonsoft.Json](https://www.nuget.org/packages/newtonsoft.json/) is used to read the .jsons that this tool loads to add new wardrobe slots.
+[Newtonsoft.Json](https://www.nuget.org/packages/newtonsoft.json/) is used to read the .jsons that this tool loads to add new wardrobe slots and is also required to use UAssetAPI.
 
-Comes with .jsons setup in the "SlotsToAdd" to add all of the NPC enemies. If you want to add a modded character, the mod developer must use a unique path + upload a .json along with it to be used with this tool.
-Alternatively the end user can alter the pathways of the existing mod to not replace the original mesh.
+Comes with .jsons setup in the "SlotsToAdd" to add all of the NPC enemies.
+Most mods should outright work with this manager as it will add the mods based on the inserted .pak name, then replace the original Sifu pathways with it's own pathways.
 
-## USAGE  (EXISTING MODS TO NEW SLOTS)
+If a mod developer wants to make a mod require this, just make your mod in a unique pathway then include a .json that properly links to your model.
+This way you have more control over what endusers would see Name and Description wise.
 
-### Updating File Paths from Existing Mods
-- Using [UnrealPak](https://unrealpak.com/), Unpak the existing mod .pak folder
-- Using my [UE-Path-Updater](https://github.com/KurohaSaenoki/UE-Path-Updater), update the mods assets so the pathing is no longer: /Game/Characters/MainChar/
-    - Example: /Game/Characters/MainChar/ -> /Game/Zair_2B/
-- Ensure your Unpaked Mod folder is accurate to your updated path
-    - Example: {Mod-Name}/Sifu/Content/Zair_2B/
-- Use UnrealPak to RePak the mod folder using these new pathways
-- Place the new mod .pak into your Sifu/Sifu/Content/Paks/~mods folder
-- Ensure it has a .sig by copying any other sig and renaming it to match the pak name
-
-### Using the SifuWardrobeManager to Expand the Wardrobe
-- Duplicate a .json in the "SlotsToAdd" folder (or use the Template.json)
-- Rename it, they get added alphabetically (hence why the NPCs use numbers at the start)
-- Open your new .json, set a new Name, Description, and Paths to match the new model
-- Open the SifuWardrobeManager.exe
-    - It should ask if you want to Unlock every vanilla outfit, Y/y to do so, otherwise just press Enter to continue
-    - The modified assets will be saved into a new folder named "SifuWardrobeManager"
-    - A Pak will automatically be created using the "SifuWardrobeManager" folder, along with copying a .sig in the "ORIGINALASSETS" folder
-- Place the SifuWardrobeManager_9_P .pak and .sig into your Sifu/Sifu/Content/Paks/~mods folder
+## USAGE
+- Insert any Replacer Mod .paks into the "Mods" folder
+- Launch SifuWardrobeManager.exe
+- Type Y/N (Yes or No) for Unlocking all the Vanilla Outfits by default
+- Generate a .json for the new mod inserts
+    - Input a Sort Number
+    - Input a Name
+    - Input a Description (Please properly credit modders)
+- The program should finish up and automatically create a new .pak/.sig
+- Place the SifuWardrobeManager_9_P .pak/.sig inside of "Sifu/Sifu/Content/Paks/~mods"
+    - Create a new "~mods" folder if it doesn't already exist
 
 <a href="https://www.nexusmods.com/sifu/mods/118">
 <img width="2558" height="1439" src="https://github.com/user-attachments/assets/3f60d073-6d93-4e58-856b-cbfb5f73fb2a" alt="2B Mod by Zair"/>
