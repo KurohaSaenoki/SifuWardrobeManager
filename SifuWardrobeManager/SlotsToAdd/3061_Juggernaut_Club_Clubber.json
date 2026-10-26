@@ -1,8 +1,0 @@
-{
-	"Name": "Juggernaut (Club)",
-	"Description": "Clubber",
-	"Model": {
-		"Male": "Sifu/Content/Characters/PNJ/BigGuy/Meshes/Hideout02/SK_BigGuy_Hideout2_Clubber_01",
-		"Female": "Sifu/Content/Characters/PNJ/BigGuy/Meshes/Hideout02/SK_BigGuy_Hideout2_Clubber_01"
-	}
-}

@@ -1,9 +1,0 @@
-{
-	"Name": "Flashkick (Tower)",
-	"Description": "Assassin",
-	"Model": {
-		"Male": "Sifu/Content/Characters/PNJ/FlashKick/Meshes/Hideout04/SK_FlashKick_Hideout4_Assassin_01",
-		"Female": "Sifu/Content/Characters/PNJ/FlashKick/Meshes/Hideout04/SK_FlashKick_Hideout4_Assassin_01"
-	}
-}
-

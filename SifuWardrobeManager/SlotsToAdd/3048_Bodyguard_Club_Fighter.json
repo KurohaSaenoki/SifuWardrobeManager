@@ -1,9 +1,0 @@
-{
-	"Name": "Bodyguard (Club)",
-	"Description": "Fighter",
-	"Model": {
-		"Male": "Sifu/Content/Characters/PNJ/BodyGuards/M/Meshes/Hideout02/SK_BodyGuard_M_Hideout02_Fighter",
-		"Female": "Sifu/Content/Characters/PNJ/BodyGuards/M/Meshes/Hideout02/SK_BodyGuard_M_Hideout02_Fighter"
-	}
-}
-

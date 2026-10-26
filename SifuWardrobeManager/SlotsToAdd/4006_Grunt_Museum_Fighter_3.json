@@ -1,9 +1,0 @@
-{
-	"Name": "Grunt (Museum)",
-	"Description": "Fighter 3",
-	"Model": {
-		"Male": "Sifu/Content/Characters/PNJ/Grunt/M/Meshes/Hideout3/SK_Grunt_M_Hideout_03_Fighter_03",
-		"Female": "Sifu/Content/Characters/PNJ/Grunt/W/Meshes/Hideout03/SK_Grunt_W_Hideout_03_Fighter_03"
-	}
-}
-

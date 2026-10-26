@@ -1,9 +1,0 @@
-{
-	"Name": "Juggernaut (Tower)",
-	"Description": "Guard",
-	"Model": {
-		"Male": "Sifu/Content/Characters/PNJ/BigGuy/Meshes/Hideout04/SK_BigGuy_Hideout4_Guard_03",
-		"Female": "Sifu/Content/Characters/PNJ/BigGuy/Meshes/Hideout04/SK_BigGuy_Hideout4_Guard_03"
-	}
-}
-

@@ -1,9 +1,0 @@
-{
-	"Name": "Servant (Museum)",
-	"Description": "Fighter 12 M / Mafia 8 W",
-	"Model": {
-		"Male": "Sifu/Content/Characters/PNJ/Servant/M/Meshes/Hideout03/SK_Servant_M_Hideout03_Fighter_12",
-		"Female": "Sifu/Content/Characters/PNJ/Servant/W/Meshes/Hideout03/SK_Servant_W_Hideout03_Mafia_08"
-	}
-}
-

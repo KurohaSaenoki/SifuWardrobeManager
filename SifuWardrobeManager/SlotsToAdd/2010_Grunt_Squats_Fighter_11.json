@@ -1,9 +1,0 @@
-{
-	"Name": "Grunt (Squats)",
-	"Description": "Fighter 11",
-	"Model": {
-		"Male": "Sifu/Content/Characters/PNJ/Grunt/M/Meshes/Hideout1/SK_Grunt_M_Hideout01_Fighter_11",
-		"Female": "Sifu/Content/Characters/PNJ/Grunt/M/Meshes/Hideout1/SK_Grunt_M_Hideout01_Fighter_11"
-	}
-}
-
