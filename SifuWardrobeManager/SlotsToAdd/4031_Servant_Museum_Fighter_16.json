@@ -1,0 +1,10 @@
+{
+	"Name": "Servant (Museum)",
+	"Description": "Fighter 16 M / Mafia 10 W",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/Servant/M/Meshes/Hideout03/SK_Servant_M_Hideout03_Fighter_16",
+		"Female": "Sifu/Content/Characters/PNJ/Servant/W/Meshes/Hideout03/SK_Servant_W_Hideout03_Mafia_10"
+	},
+	"Pak": "pakchunk0-WindowsNoEditor"
+}
+
