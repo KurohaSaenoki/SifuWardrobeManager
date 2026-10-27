@@ -1,0 +1,10 @@
+{
+	"Name": "Grunt (Sanctuary)",
+	"Description": "Disciple 2",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/Grunt/M/Meshes/Hideout5/SK_Grunt_Hideout5_Disciple_02",
+		"Female": "Sifu/Content/Characters/PNJ/Grunt/M/Meshes/Hideout5/SK_Grunt_Hideout5_Disciple_02"
+	},
+	"Pak": "pakchunk0-WindowsNoEditor"
+}
+
