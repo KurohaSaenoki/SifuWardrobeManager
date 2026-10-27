@@ -1,0 +1,9 @@
+{
+	"Name": "Sean (Prologue)",
+	"Description": "The Fighter",
+	"Model": {
+		"Male": "Sifu/Content/Characters/Boss/Sean/Meshes/SK_Sean_HD0",
+		"Female": "Sifu/Content/Characters/Boss/Sean/Meshes/SK_Sean_HD0"
+	},
+	"Pak": "pakchunk0-WindowsNoEditor"
+}

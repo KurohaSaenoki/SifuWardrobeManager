@@ -1,0 +1,10 @@
+{
+	"Name": "Grunt (Squats)",
+	"Description": "Skullbro 1",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/Grunt/M/Meshes/Hideout1/SK_Grunt_M_Hideout01_Skullbros_01",
+		"Female": "Sifu/Content/Characters/PNJ/Grunt/M/Meshes/Hideout1/SK_Grunt_M_Hideout01_Skullbros_01"
+	},
+	"Pak": "pakchunk0-WindowsNoEditor"
+}
+

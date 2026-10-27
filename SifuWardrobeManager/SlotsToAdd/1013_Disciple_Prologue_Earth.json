@@ -1,0 +1,10 @@
+{
+	"Name": "Disciple (Prologue)",
+	"Description": "Earth",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/Disicple/W/Meshes/Hideout00/SK_Disciple_W_Hideout00_EarthDisciple_01",
+		"Female": "Sifu/Content/Characters/PNJ/Disicple/W/Meshes/Hideout00/SK_Disciple_W_Hideout00_EarthDisciple_01"
+	},
+	"Pak": "pakchunk0-WindowsNoEditor"
+}
+
