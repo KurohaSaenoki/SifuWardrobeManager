@@ -1,0 +1,10 @@
+{
+	"Name": "Grunt (Club)",
+	"Description": "Fighter 18",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/Grunt/M/Meshes/Hideout2/SK_Grunt_M_Hideout_02_Fighter_18",
+		"Female": "Sifu/Content/Characters/PNJ/Grunt/M/Meshes/Hideout2/SK_Grunt_M_Hideout_02_Fighter_18"
+	},
+	"Pak": "pakchunk0-WindowsNoEditor"
+}
+

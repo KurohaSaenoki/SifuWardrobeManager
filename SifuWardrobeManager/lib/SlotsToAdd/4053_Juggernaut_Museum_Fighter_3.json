@@ -1,0 +1,10 @@
+{
+	"Name": "Juggernaut (Museum)",
+	"Description": "Fighter 3",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/BigGuy/Meshes/Hideout03/SK_BigGuy_Hideout03_Fighter_04",
+		"Female": "Sifu/Content/Characters/PNJ/BigGuy/Meshes/Hideout03/SK_BigGuy_Hideout03_Fighter_04"
+	},
+	"Pak": "pakchunk0-WindowsNoEditor"
+}
+

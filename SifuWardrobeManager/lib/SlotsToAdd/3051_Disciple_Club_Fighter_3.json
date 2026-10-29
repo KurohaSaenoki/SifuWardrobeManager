@@ -1,0 +1,10 @@
+{
+	"Name": "Disciple (Club)",
+	"Description": "Fighter 3",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/Disicple/M/Meshes/Hideout02/SK_Disciple_M_Hideout2_Fighter_03",
+		"Female": "Sifu/Content/Characters/PNJ/Disicple/W/Meshes/Hideout02/SK_Disciple_W_Hideout2_Fighter_03"
+	},
+	"Pak": "pakchunk0-WindowsNoEditor"
+}
+
