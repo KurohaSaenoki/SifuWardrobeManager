@@ -1,9 +1,0 @@
-{
-	"Name": "Youth",
-	"Description": "Appearance during my childhood",
-	"Model": {
-		"Male": "Sifu/Content/Characters/MainChar/Childs/M/Meshes/SK_MainChar_Child_M",
-		"Female": "Sifu/Content/Characters/MainChar/Childs/W/Meshes/SK_MainChar_Child_W"
-	},
-	"Pak": "pakchunk0-WindowsNoEditor"
-}
