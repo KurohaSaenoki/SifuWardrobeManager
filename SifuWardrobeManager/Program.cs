@@ -1255,53 +1255,53 @@ namespace SifuWardrobeManager
                             string FileListPath = Path.Combine(UnrealPakFolder, "filelist.txt");
 
                             //Create FilePath.txt so UnrealPak can generate Pak
-                            if (!File.Exists(FileListPath))
+                            try
                             {
-                                try
-                                {
-                                    File.WriteAllText(FileListPath, $"\"{OutputFolder}\\*.*\" \"..\\..\\..\\*.*\"");
-                                }
-                                catch
-                                {
-                                    Console.WriteLine("Failed to Create Filelist.txt?");
-                                    Proceed();
-                                    return;
-                                }
+                                File.WriteAllText(FileListPath, $"\"{OutputFolder}\\*.*\" \"..\\..\\..\\*.*\"");
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Failed to Create Filelist.txt?");
+                                Proceed();
+                                return;
                             }
 
-                            //Generate Pak
-                            ProcessStartInfo startInfo = new ProcessStartInfo();
-                            startInfo.WorkingDirectory = UnrealPakFolder;
-                            startInfo.FileName = UnrealPakPath;
-                            startInfo.Arguments = $"\"{PakPath}\" -create=\"{FileListPath}\" -compress";
-                            using (var process = Process.Start(startInfo))
+                            if (File.Exists(FileListPath))
                             {
-                                if (process != null)
+                                //Generate Pak
+                                ProcessStartInfo startInfo = new ProcessStartInfo();
+                                startInfo.WorkingDirectory = UnrealPakFolder;
+                                startInfo.FileName = UnrealPakPath;
+                                startInfo.Arguments = $"\"{PakPath}\" -create=\"{FileListPath}\" -compress";
+                                using (var process = Process.Start(startInfo))
                                 {
-                                    process.WaitForExit();
-                                }
-                                else
-                                {
-                                    Console.WriteLine("UnrealPak failed to launch...?");
-                                    Proceed();
-                                }
-                            }
-
-                            //Copy over .sig
-                            string SigPath = Path.Combine(OrigAssetFolder, "pakchunk0-WindowsNoEditor.sig");
-                            if (File.Exists(SigPath))
-                            {
-                                if (!File.Exists(NewSig))
-                                {
-                                    try
+                                    if (process != null)
                                     {
-                                        File.Copy(SigPath, NewSig, false);
+                                        process.WaitForExit();
                                     }
-                                    catch
+                                    else
                                     {
-                                        Console.WriteLine("Failed to Copy Detected .sig... Possibly a lack of storage?");
+                                        Console.WriteLine("UnrealPak failed to launch...?");
                                         Proceed();
-                                        return;
+                                    }
+                                }
+
+                                //Copy over .sig
+                                string SigPath = Path.Combine(OrigAssetFolder, "pakchunk0-WindowsNoEditor.sig");
+                                if (File.Exists(SigPath))
+                                {
+                                    if (!File.Exists(NewSig))
+                                    {
+                                        try
+                                        {
+                                            File.Copy(SigPath, NewSig, false);
+                                        }
+                                        catch
+                                        {
+                                            Console.WriteLine("Failed to Copy Detected .sig... Possibly a lack of storage?");
+                                            Proceed();
+                                            return;
+                                        }
                                     }
                                 }
                             }
