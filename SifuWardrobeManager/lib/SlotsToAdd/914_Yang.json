@@ -1,0 +1,10 @@
+{
+	"Name": "Yang",
+	"Description": "The Leader",
+	"Model": {
+		"Male": "Sifu/Content/Characters/Boss/Yang/Meshes/SK_Yang_Hideout05",
+		"Female": "Sifu/Content/Characters/Boss/Yang/Meshes/SK_Yang_Hideout05"
+	},
+	"Pak": "pakchunk0-WindowsNoEditor"
+}
+

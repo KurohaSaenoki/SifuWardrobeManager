@@ -1,0 +1,10 @@
+{
+	"Name": "Grunt (Prologue)",
+	"Description": "Casual Disciple 8",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/Grunt/M/Meshes/Hideout0/SK_Grunt_M_Hideout00_CasualDisciple_08",
+		"Female": "Sifu/Content/Characters/PNJ/Grunt/M/Meshes/Hideout0/SK_Grunt_M_Hideout00_CasualDisciple_08"
+	},
+	"Pak": "pakchunk0-WindowsNoEditor"
+}
+

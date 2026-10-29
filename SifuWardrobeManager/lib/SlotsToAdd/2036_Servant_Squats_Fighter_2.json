@@ -1,0 +1,10 @@
+{
+	"Name": "Servant (Squats)",
+	"Description": "Fighter 2",
+	"Model": {
+		"Male": "Sifu/Content/Characters/PNJ/Servant/M/Meshes/Hideout01/SK_Servant_M_Hideout01_Fighter_02",
+		"Female": "Sifu/Content/Characters/PNJ/Servant/M/Meshes/Hideout01/SK_Servant_M_Hideout01_Fighter_02"
+	},
+	"Pak": "pakchunk0-WindowsNoEditor"
+}
+

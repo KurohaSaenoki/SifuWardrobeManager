@@ -1,0 +1,10 @@
+{
+	"Name": "Jinfeng",
+	"Description": "The CEO",
+	"Model": {
+		"Male": "Sifu/Content/Characters/Boss/Fengjie/Meshes/SK_Fengjie_Phase01",
+		"Female": "Sifu/Content/Characters/Boss/Fengjie/Meshes/SK_Fengjie_Phase01"
+	},
+	"Pak": "pakchunk0-WindowsNoEditor"
+}
+
